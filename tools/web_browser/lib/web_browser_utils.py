@@ -59,7 +59,10 @@ def catch_error(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)})
+            # Log full error for debugging but return sanitized message to client
+            import logging
+            logging.getLogger(__name__).error(f"Error in {func.__name__}: {e}", exc_info=True)
+            return jsonify({"status": "error", "message": "An internal error occurred"})
     return wrapper
 
 
