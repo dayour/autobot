@@ -1,4 +1,4 @@
-# Setting up SWE-agent
+# Setting up autobot
 
 <div class="grid cards">
   <a href="source/" class="nav-card-link">
@@ -7,7 +7,7 @@
         <span class="material-icons nav-card-icon">settings</span>
         <span class="nav-card-title">Install from source</span>
       </div>
-      <p class="nav-card-description">Install SWE-agent locally from source using pip. This is the default option.</p>
+      <p class="nav-card-description">Install autobot locally from source using pip. This is the default option.</p>
     </div>
   </a>
 
@@ -27,7 +27,7 @@
         <span class="material-icons nav-card-icon">newspaper</span>
         <span class="nav-card-title">Changelog</span>
       </div>
-      <p class="nav-card-description">See what's new in SWE-agent!</p>
+      <p class="nav-card-description">See what's new in autobot!</p>
     </div>
   </a>
 </div>

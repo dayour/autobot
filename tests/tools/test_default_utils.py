@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from sweagent import TOOLS_DIR
+from autobot import TOOLS_DIR
 from tests.utils import make_python_tool_importable
 
 DEFAULT_TOOLS_DIR = TOOLS_DIR / "windowed"
@@ -16,7 +16,7 @@ from windowed_file import TextNotFound, WindowedFile  # type: ignore
 
 
 def test_env_file_override(with_tmp_env_file):
-    assert Path(os.getenv("SWE_AGENT_ENV_FILE")).name == ".swe-agent-env"  # type: ignore
+    assert Path(os.getenv("autobot_ENV_FILE")).name == ".autobot-env"  # type: ignore
 
 
 def create_test_file_with_content(tmp_env_file: Path, content: str) -> WindowedFile:

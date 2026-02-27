@@ -1,4 +1,4 @@
-# This config is close to SWE-agent 0.7, i.e., using the line-range based replace edit tools.
+# This config is close to autobot 0.7, i.e., using the line-range based replace edit tools.
 # This config was specifically used to be pointed to an arbitrary github issue rather than for benchmarking.
 agent:
   templates:

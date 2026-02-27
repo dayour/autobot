@@ -17,11 +17,11 @@ from tenacity import RetryError
 from typing_extensions import Self
 from unidiff import UnidiffParseError
 
-from sweagent import __version__, get_agent_commit_hash, get_rex_commit_hash, get_rex_version
-from sweagent.agent.action_sampler import AbstractActionSampler, ActionSamplerConfig
-from sweagent.agent.history_processors import DefaultHistoryProcessor, HistoryProcessor
-from sweagent.agent.hooks.abstract import AbstractAgentHook, CombinedAgentHook
-from sweagent.agent.models import (
+from autobot import __version__, get_agent_commit_hash, get_rex_commit_hash, get_rex_version
+from autobot.agent.action_sampler import AbstractActionSampler, ActionSamplerConfig
+from autobot.agent.history_processors import DefaultHistoryProcessor, HistoryProcessor
+from autobot.agent.hooks.abstract import AbstractAgentHook, CombinedAgentHook
+from autobot.agent.models import (
     AbstractModel,
     HumanModel,
     HumanThoughtModel,
@@ -29,32 +29,32 @@ from sweagent.agent.models import (
     ModelConfig,
     get_model,
 )
-from sweagent.agent.problem_statement import ProblemStatement, ProblemStatementConfig
-from sweagent.agent.reviewer import (
+from autobot.agent.problem_statement import ProblemStatement, ProblemStatementConfig
+from autobot.agent.reviewer import (
     ChooserRetryLoop,
     RetryLoopConfig,
     ReviewSubmission,
     ScoreRetryLoop,
     get_retry_loop_from_config,
 )
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.exceptions import (
+from autobot.environment.autobot_env import autobotenv
+from autobot.exceptions import (
     ContentPolicyViolationError,
     ContextWindowExceededError,
     CostLimitExceededError,
     FormatError,
     TotalCostLimitExceededError,
 )
-from sweagent.tools.parsing import (
+from autobot.tools.parsing import (
     ActionOnlyParser,
     ThoughtActionParser,
 )
-from sweagent.tools.tools import ToolConfig, ToolHandler
-from sweagent.types import AgentInfo, AgentRunResult, StepOutput, Trajectory, TrajectoryStep
-from sweagent.utils.config import _convert_paths_to_abspath, _strip_abspath_from_dict
-from sweagent.utils.jinja_warnings import _warn_probably_wrong_jinja_syntax
-from sweagent.utils.log import get_logger
-from sweagent.utils.patch_formatter import PatchFormatter
+from autobot.tools.tools import ToolConfig, ToolHandler
+from autobot.types import AgentInfo, AgentRunResult, StepOutput, Trajectory, TrajectoryStep
+from autobot.utils.config import _convert_paths_to_abspath, _strip_abspath_from_dict
+from autobot.utils.jinja_warnings import _warn_probably_wrong_jinja_syntax
+from autobot.utils.log import get_logger
+from autobot.utils.patch_formatter import PatchFormatter
 
 
 class TemplateConfig(BaseModel):
@@ -89,14 +89,14 @@ class TemplateConfig(BaseModel):
 
     demonstrations: list[Path] = field(default_factory=list)
     """Paths to demonstrations. If path is not absolute, it is assumed to be
-    relative to the SWE_AGENT_CONFIG_ROOT (if set) or the SWE-agent repository root
+    relative to the autobot_CONFIG_ROOT (if set) or the autobot repository root
     """
 
     put_demos_in_history: bool = False
     """If True, add demonstration to history instead of as a single message"""
 
     disable_image_processing: bool = False
-    """If True, disable image processing for multimodal problem statements (i.e. SWEBenchMultimodalProblemStatement).
+    """If True, disable image processing for multimodal problem statements (i.e. autobotbenchMultimodalProblemStatement).
     """
 
     shell_check_error_template: str = (
@@ -134,13 +134,13 @@ class TemplateConfig(BaseModel):
 
     @model_validator(mode="after")
     def warnings(self) -> Self:
-        logger = get_logger("swea-config", emoji="🔧")
+        logger = get_logger("swea-config")
         if self.put_demos_in_history and self.demonstration_template is not None:
             logger.warning("demonstration_template is ignored when put_demos_in_history is True")
         if not self.system_template or not self.instance_template:
             logger.warning(
                 "system_template/instance_template is not set, using empty string. Perhaps you were"
-                " overwriting the default config? See https://swe-agent.com/latest/usage/cl_tutorial/"
+                " overwriting the default config? See https://autobot.com/latest/usage/cl_tutorial/"
                 " for more information. Note: You can ignore this warning in human mode."
             )
         return self
@@ -216,9 +216,9 @@ class _TotalExecutionTimeExceeded(Exception):
     """Used for internal control flow"""
 
 
-RETRY_WITH_OUTPUT_TOKEN = "###SWE-AGENT-RETRY-WITH-OUTPUT###"
-RETRY_WITHOUT_OUTPUT_TOKEN = "###SWE-AGENT-RETRY-WITHOUT-OUTPUT###"
-EXIT_FORFEIT_TOKEN = "###SWE-AGENT-EXIT-FORFEIT###"
+RETRY_WITH_OUTPUT_TOKEN = "###autobot-RETRY-WITH-OUTPUT###"
+RETRY_WITHOUT_OUTPUT_TOKEN = "###autobot-RETRY-WITHOUT-OUTPUT###"
+EXIT_FORFEIT_TOKEN = "###autobot-EXIT-FORFEIT###"
 
 
 class AbstractAgent:
@@ -246,7 +246,7 @@ def get_agent_from_config(config: AgentConfig) -> AbstractAgent:
         return RetryAgent.from_config(config)
     elif config.type == "shell":
         # Need to defer import to avoid circular dependency
-        from sweagent.agent.extra.shell_agent import ShellAgent
+        from autobot.agent.extra.shell_agent import ShellAgent
 
         return ShellAgent.from_config(config)
     else:
@@ -260,7 +260,7 @@ class RetryAgent(AbstractAgent):
         self.config = config.model_copy(deep=True)
         self._hooks = []
         self._i_attempt = 0
-        self.logger = get_logger("swea-agent", emoji="🤠")
+        self.logger = get_logger("swea-agent")
         self._agent: DefaultAgent | None = None
         self._attempt_data: list[dict[str, Any]] = []
         self._total_instance_attempt_stats = InstanceStats()
@@ -270,7 +270,7 @@ class RetryAgent(AbstractAgent):
         self._chook = CombinedAgentHook()
         self._traj_path: Path | None = None
         self._problem_statement: ProblemStatement | None = None
-        self._env: SWEEnv | None = None
+        self._env: autobotenv | None = None
         self._output_dir: Path | None = None
         self._rloop: ScoreRetryLoop | ChooserRetryLoop | None = None
 
@@ -288,7 +288,7 @@ class RetryAgent(AbstractAgent):
         self._hooks.append(hook)
 
     def setup(
-        self, env: SWEEnv, problem_statement: ProblemStatement | ProblemStatementConfig, output_dir: Path = Path(".")
+        self, env: autobotenv, problem_statement: ProblemStatement | ProblemStatementConfig, output_dir: Path = Path(".")
     ) -> None:
         """Setup the retry agent for a new problem instance.
         This is mostly a bookkeeping step.
@@ -389,7 +389,7 @@ class RetryAgent(AbstractAgent):
 
     def run(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         output_dir: Path = Path("."),
     ) -> AgentRunResult:
@@ -470,9 +470,9 @@ class DefaultAgent(AbstractAgent):
             self.tools.config.parse_function = ActionOnlyParser()
         self.history_processors = history_processors
         self.max_requeries = max_requeries
-        self.logger = get_logger("swea-agent", emoji="🤠")
+        self.logger = get_logger("swea-agent")
         # Set in run method
-        self._env: SWEEnv | None = None
+        self._env: autobotenv | None = None
         self._problem_statement: ProblemStatement | ProblemStatementConfig | None = None
         self.traj_path: Path | None = None
 
@@ -532,7 +532,7 @@ class DefaultAgent(AbstractAgent):
     @replay_config.setter
     def replay_config(self, value: BaseModel):
         # Do import here to avoid circular dependency
-        from sweagent.run.run_single import RunSingleConfig
+        from autobot.run.run_single import RunSingleConfig
 
         self._replay_config = RunSingleConfig.model_validate(_strip_abspath_from_dict(value.model_dump()))
 
@@ -560,7 +560,7 @@ class DefaultAgent(AbstractAgent):
 
     def setup(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         output_dir: Path = Path("."),
     ) -> None:
@@ -572,10 +572,10 @@ class DefaultAgent(AbstractAgent):
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # apply template configuration to multimodal problem statements
-        if hasattr(problem_statement, "type") and problem_statement.type == "swe_bench_multimodal":
-            from sweagent.agent.problem_statement import SWEBenchMultimodalProblemStatement
+        if hasattr(problem_statement, "type") and problem_statement.type == "autobot_bench_multimodal":
+            from autobot.agent.problem_statement import autobotbenchMultimodalProblemStatement
 
-            if isinstance(problem_statement, SWEBenchMultimodalProblemStatement):
+            if isinstance(problem_statement, autobotbenchMultimodalProblemStatement):
                 # apply the global disable_image_processing setting if it's not explicitly set
                 if not problem_statement.disable_image_processing and self.templates.disable_image_processing:
                     problem_statement.disable_image_processing = True
@@ -593,8 +593,8 @@ class DefaultAgent(AbstractAgent):
         self.tools.install(self._env)
         self._chook.on_setup_attempt()
         self.info = AgentInfo()
-        self.info["swe_agent_hash"] = get_agent_commit_hash()
-        self.info["swe_agent_version"] = __version__
+        self.info["autobot_hash"] = get_agent_commit_hash()
+        self.info["autobot_version"] = __version__
         self.info["swe_rex_version"] = get_rex_version()
         self.info["swe_rex_hash"] = get_rex_commit_hash()
         assert self._env is not None
@@ -697,8 +697,8 @@ class DefaultAgent(AbstractAgent):
         message = "\n".join(messages)
 
         # We disable syntax highlighting here, because some inputs can lead to a complete cross-thread
-        # freeze in the agent. See https://github.com/SWE-agent/SWE-agent/issues/901 .
-        self.logger.info(f"🤖 MODEL INPUT\n{message}", extra={"highlighter": None})
+        # freeze in the agent. See https://github.com/autobot/autobot/issues/901 .
+        self.logger.info(f"MODEL INPUT\n{message}", extra={"highlighter": None})
         history_item: dict[str, Any] = {
             "role": "user",
             "content": message,
@@ -1047,7 +1047,7 @@ class DefaultAgent(AbstractAgent):
             if output.get("tool_calls") is not None:
                 step.tool_call_ids = [call["id"] for call in output["tool_calls"]]
                 step.tool_calls = output["tool_calls"]
-            self.logger.info(f"💭 THOUGHT\n{step.thought}\n\n🎬 ACTION\n{step.action.strip()}")
+            self.logger.info(f"THOUGHT\n{step.thought}\n\nACTION\n{step.action.strip()}")
             self._chook.on_actions_generated(step=step)
             return self.handle_action(step)
         except Exception as e:
@@ -1264,7 +1264,7 @@ class DefaultAgent(AbstractAgent):
 
     def run(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         output_dir: Path = Path("."),
     ) -> AgentRunResult:

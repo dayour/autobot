@@ -108,10 +108,10 @@ def append_results(traj_path: Path, instance_id: str, content, results, results_
         is_resolved = instance_id in results["resolved_ids"]
 
         status.append("**** Statuses ****")
-        status.append(f"  {'✅' if is_completed else '❌'} Completed (The agent successfully ran)")
-        status.append(f"  {'✅' if is_submitted else '❌'} Submitted (The agent successfully submitted a pull request)")
+        status.append(f"  {'PASS' if is_completed else 'FAIL'} Completed (The agent successfully ran)")
+        status.append(f"  {'PASS' if is_submitted else 'FAIL'} Submitted (The agent successfully submitted a pull request)")
         status.append(
-            f"  {'✅' if is_resolved else '❌'} Resolved (The pull request {'' if is_resolved else 'has not '}"
+            f"  {'PASS' if is_resolved else 'FAIL'} Resolved (The pull request {'' if is_resolved else 'has not '}"
             "successfully resolved the issue during eval)"
         )
     else:
@@ -211,11 +211,11 @@ def get_status(traj_path) -> str:
     exit_status_str = f" ({exit_status} after {n_steps} steps)"
     instance_id = Path(traj_path).stem
     if results is None:
-        return f"❓ {exit_status_str}"
+        return f"? {exit_status_str}"
     elif instance_id in results["resolved_ids"]:
-        return "✅"
+        return "PASS"
     else:
-        return f"❌ {exit_status_str}"
+        return f"FAIL {exit_status_str}"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

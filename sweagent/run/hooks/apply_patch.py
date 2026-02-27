@@ -5,27 +5,27 @@ import rich
 import rich.markdown
 import rich.panel
 
-from sweagent.agent.problem_statement import ProblemStatementConfig
-from sweagent.environment.repo import LocalRepoConfig
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.run.common import _is_promising_patch
-from sweagent.run.hooks.abstract import RunHook
-from sweagent.types import AgentRunResult
-from sweagent.utils.log import get_logger
+from autobot.agent.problem_statement import ProblemStatementConfig
+from autobot.environment.repo import LocalRepoConfig
+from autobot.environment.autobot_env import autobotenv
+from autobot.run.common import _is_promising_patch
+from autobot.run.hooks.abstract import RunHook
+from autobot.types import AgentRunResult
+from autobot.utils.log import get_logger
 
 
 class SaveApplyPatchHook(RunHook):
     """This hook saves patches to a separate directory and optionally applies them to a local repository."""
 
     def __init__(self, apply_patch_locally: bool = False, show_success_message: bool = True):
-        self.logger = get_logger("swea-save_apply_patch", emoji="⚡️")
+        self.logger = get_logger("swea-save_apply_patch")
         self._apply_patch_locally = apply_patch_locally
         self._show_success_message = show_success_message
 
     def on_init(self, *, run):
         self._output_dir = Path(run.output_dir)
 
-    def on_instance_start(self, *, index: int, env: SWEEnv, problem_statement: ProblemStatementConfig):
+    def on_instance_start(self, *, index: int, env: autobotenv, problem_statement: ProblemStatementConfig):
         self._env = env
         self._problem_statement = problem_statement
 
@@ -48,12 +48,12 @@ class SaveApplyPatchHook(RunHook):
     def _print_patch_message(patch_output_file: Path):
         console = rich.console.Console()
         msg = [
-            "SWE-agent has produced a patch that it believes will solve the issue you submitted!",
+            "autobot has produced a patch that it believes will solve the issue you submitted!",
             "Use the code snippet below to inspect or apply it!",
         ]
         panel = rich.panel.Panel.fit(
             "\n".join(msg),
-            title="🎉 Submission successful 🎉",
+            title=" Submission successful ",
         )
         console.print(panel)
         content = [

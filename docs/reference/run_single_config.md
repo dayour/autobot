@@ -1,3 +1,3 @@
-::: sweagent.run.run_single.RunSingleConfig
+::: autobot.run.run_single.RunSingleConfig
 
-::: sweagent.run.run_single.RunSingleActionConfig
+::: autobot.run.run_single.RunSingleActionConfig

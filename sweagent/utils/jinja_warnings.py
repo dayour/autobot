@@ -1,4 +1,4 @@
-from sweagent.utils.log import get_logger
+from autobot.utils.log import get_logger
 
 
 def _warn_probably_wrong_jinja_syntax(template: str | None) -> None:
@@ -10,5 +10,5 @@ def _warn_probably_wrong_jinja_syntax(template: str | None) -> None:
     for s in ["{%", "{ %", "{{"]:
         if s in template:
             return
-    logger = get_logger("swea-config", emoji="🔧")
+    logger = get_logger("swea-config")
     logger.warning("Probably wrong Jinja syntax in template: %s. Make sure to use {{var}} instead of {var}.", template)

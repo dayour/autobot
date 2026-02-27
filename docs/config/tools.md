@@ -12,7 +12,7 @@ Typically, there is
 * Specific tools for the agent to inspect the code (file viewer, etc)
 * Code editors (for example with search and replace or line range based methods)
 
-With SWE-agent, these tools are organized in _tool bundles_.
+With autobot, these tools are organized in _tool bundles_.
 
 Each tool bundle is a folder with the following structure:
 
@@ -46,7 +46,7 @@ tools:
 Another important key is the `state` field.
 The `state` command is a special command that is executed after every action and returns a json string that we parse.
 The resulting dictionary can be used to format prompt templates.
-For example, for the classical SWE-agent tools, we extract the working directory and the currently open file like so:
+For example, for the classical autobot tools, we extract the working directory and the currently open file like so:
 
 ```python title="tools/windowed/bin/_state"
 #!/usr/bin/env python3

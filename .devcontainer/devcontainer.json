@@ -1,5 +1,5 @@
 {
-    "name": "SWE-Agent Codespace",
+    "name": "autobot Codespace",
     "image": "mcr.microsoft.com/vscode/devcontainers/miniconda:0-3",
     "customizations":{
         "vscode":{

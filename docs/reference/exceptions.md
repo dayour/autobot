@@ -1,6 +1,6 @@
-# Custom exceptions raised by SWE-agent
+# Custom exceptions raised by autobot
 
-::: sweagent.exceptions
+::: autobot.exceptions
     options:
         show_root_full_path: false
         show_bases: false

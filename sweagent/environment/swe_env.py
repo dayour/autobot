@@ -16,9 +16,9 @@ from swerex.runtime.abstract import (
 )
 from swerex.runtime.abstract import Command as RexCommand
 
-from sweagent.environment.hooks.abstract import CombinedEnvHooks, EnvHook
-from sweagent.environment.repo import Repo, RepoConfig
-from sweagent.utils.log import get_logger
+from autobot.environment.hooks.abstract import CombinedEnvHooks, EnvHook
+from autobot.environment.repo import Repo, RepoConfig
+from autobot.utils.log import get_logger
 
 
 class EnvironmentConfig(BaseModel):
@@ -48,7 +48,7 @@ class EnvironmentConfig(BaseModel):
     name: str = "main"
 
 
-class SWEEnv:
+class autobotenv:
     def __init__(
         self,
         *,
@@ -74,7 +74,7 @@ class SWEEnv:
         self.repo = repo
         self._post_startup_commands = post_startup_commands
         self.post_startup_command_timeout = post_startup_command_timeout
-        self.logger = get_logger("swea-env", emoji="🪴")
+        self.logger = get_logger("swea-env")
         self.name = name
         self.clean_multi_line_functions = lambda x: x
         self._chook = CombinedEnvHooks()
@@ -101,7 +101,7 @@ class SWEEnv:
         """Add `EnvHook` to the environment.
 
         This allows to inject custom functionality at different stages of the environment
-        lifecycle, in particular to connect SWE-agent to a new interface (like a GUI).
+        lifecycle, in particular to connect autobot to a new interface (like a GUI).
         """
         hook.on_init(env=self)
         self._chook.add_hook(hook)

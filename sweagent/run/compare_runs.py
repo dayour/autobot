@@ -32,16 +32,16 @@ def compare_many(paths: list[Path]) -> None:
     header: list[str] = ["ID"] + [str(i) for i in range(len(paths))] + ["Success rate"]
     table: list[list[str | float | int]] = []
 
-    def get_emoji(id: str, path: Path) -> str:
+    def get_status(id: str, path: Path) -> str:
         if id not in evaluated_ids[path]:
-            return "❓"
+            return "?"
         if id in resolved_ids[path]:
-            return "✅"
-        return "❌"
+            return ""
+        return "FAIL"
 
     ids_to_compare = set(evaluated_ids[paths[0]])
     for id in sorted(ids_to_compare):
-        row = [id] + [get_emoji(id, path) for path in paths]
+        row = [id] + [get_status(id, path) for path in paths]
         n_success = sum(id in resolved_ids[path] for path in paths)
         n_evaluated = sum(id in evaluated_ids[path] for path in paths)
         row.append(f"{n_success / n_evaluated:.2f}")
@@ -74,34 +74,34 @@ def compare_pair(new_path: Path, old_path: Path, *, show_same=False) -> None:
     print(f"Total evaluated: new {len(evaluated_ids)}, old {len(old_evaluated_ids)}")
     print(f"Total resolved: new {len(resolved_ids)}, old {len(old_resolved_ids)}")
     print("-" * 80)
-    print("Emoji legend:")
-    print("❓: Not evaluated in old version, so guessing it's either 😀 or 👾")
-    print("😀: Newly resolved in new version")
-    print("✅: Resolved in both")
-    print("❌: Resolved in old, not in new")
-    print("👾: Unresolved in both")
+    print("Status legend:")
+    print("?: Not evaluated in old version, so guessing it's either NEW or UNRESOLVED")
+    print("NEW: Newly resolved in new version")
+    print("BOTH: Resolved in both")
+    print("REGRESS: Resolved in old, not in new")
+    print("UNRESOLVED: Unresolved in both")
     print("-" * 80)
 
     for id in evaluated_ids:
         resolved_now = id in resolved_ids
         resolved_before = id in old_resolved_ids
         if id not in old_evaluated_ids and resolved_now:
-            emoji = "😀❓"
+            status = "NEW?"
         elif id not in old_evaluated_ids and not resolved_now:
-            emoji = "👾❓"
+            status = "UNRESOLVED?"
         elif resolved_now and not resolved_before:
-            emoji = "😀"
+            status = "NEW"
         elif resolved_now and resolved_before:
-            emoji = "✅"
+            status = "BOTH"
             if not show_same:
                 continue
         elif not resolved_now and resolved_before:
-            emoji = "❌"
+            status = "REGRESS"
         else:
-            emoji = "👾"
+            status = "UNRESOLVED"
             if not show_same:
                 continue
-        print(f"{emoji} {id}")
+        print(f"{status} {id}")
 
 
 def run_from_cli(_args: list[str] | None = None) -> None:

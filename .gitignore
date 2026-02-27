@@ -1,6 +1,8 @@
 keys.yaml
-.swe-agent-human-history
+.autobot-human-history
 .vscode/**
+.cursor/
+copilot-sdk-main/nul
 cov.xml
 trajectories/**
 !trajectories/demonstrations/**

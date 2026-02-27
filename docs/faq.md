@@ -2,10 +2,10 @@
 
 ## Basics
 
-> Does SWE-agent run on Windows/MacOS/Linux?
+> Does autobot run on Windows/MacOS/Linux?
 
 Yes! Your only limitation might be the availability of the docker containers for your environments.
-But you can always execute SWE-agent in the cloud.
+But you can always execute autobot in the cloud.
 
 > I got a very long error message about various configuration options not working. What's up?
 
@@ -23,20 +23,20 @@ Check that you're using a multimodal configuration (see `default_mm_with_images.
 
 Probably all of them, including local models! There's even a few for testing. See [models](installation/keys.md) and [more on models](config/models.md).
 
-> Does SWE-agent support multimodal models and images?
+> Does autobot support multimodal models and images?
 
-Yes! SWE-agent supports vision-capable models that can process images from GitHub issues. Use `--config config/default_mm_with_images.yaml` and specify a multimodal model like Claude Sonnet 4 or GPT-4o. See the [multimodal guide](usage/multimodal.md) for details.
+Yes! autobot supports vision-capable models that can process images from GitHub issues. Use `--config config/default_mm_with_images.yaml` and specify a multimodal model like Claude Sonnet 4 or GPT-4o. See the [multimodal guide](usage/multimodal.md) for details.
 
 > What can I do if my model doesn't support function calling?
 
 You can configure how to parse the model's response by choosing your `agent.tools.parse_function`.
 The default now is `function_calling`, but you can change it to `thought_action`.
 More information in the [reference](reference/parsers.md).
-There are also some config example in our [config folder](https://github.com/SWE-agent/SWE-agent/tree/main/config).
+There are also some config example in our [config folder](https://github.com/autobot/autobot/tree/main/config).
 
-## Configuring SWE-agent
+## Configuring autobot
 
-> How can I change the demonstrations given to SWE-agent?
+> How can I change the demonstrations given to autobot?
 
 At the start of each run, we feed the agent a demonstration trajectory, showing it how to solve an example issue.
 This substantially improves the agent's abilities to solve novel issues.
@@ -50,13 +50,13 @@ Yes! Take a look at [this tutorial](usage/adding_custom_tools.md).
 
 > What's up with all the output files?
 
-You're probably most interested in the `*.traj` files, which contain complete records of SWE-agent's thought process and actions. See [output files](usage/trajectories.md) for more information.
+You're probably most interested in the `*.traj` files, which contain complete records of autobot's thought process and actions. See [output files](usage/trajectories.md) for more information.
 
 ## Anything else?
 
 > I have a question/bug report/feature request...
 
-Please open a [github issue!](https://github.com/SWE-agent/SWE-agent/issues)!
+Please open a [github issue!](https://github.com/autobot/autobot/issues)!
 
 
 {% include-markdown "_footer.md" %}

@@ -505,9 +505,9 @@ agent:
 environment:
   base_commit: null
   container_name: null
-  data_path: tests/test_data/data_sources/swe-bench-dev-easy_first_only.json
+  data_path: tests/test_data/data_sources/autobot-bench-dev-easy_first_only.json
   environment_setup: null
-  image_name: sweagent/swe-agent:latest
+  image_name: autobot/autobot:latest
   install_environment: true
   no_mirror: false
   repo_path: ''

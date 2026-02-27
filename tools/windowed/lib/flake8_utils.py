@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 
 try:
-    from sweagent import TOOLS_DIR
+    from autobot import TOOLS_DIR
 except ImportError:
     pass
 else:

@@ -1,40 +1,40 @@
 # Command line basics
 
 !!! abstract "Command line basics"
-    This tutorial walks you through running SWE-agent from the command line.
+    This tutorial walks you through running autobot from the command line.
 
     * Please read our [hello world](hello_world.md) tutorial before proceeding.
-    * This tutorial focuses on using SWE-agent as a tool to solve individual issues.
-      Benchmarking SWE-agent is covered [separately](batch_mode.md).
-      Finally, we have a different tutorial for using SWE-agent for [coding challenges](coding_challenges.md).
+    * This tutorial focuses on using autobot as a tool to solve individual issues.
+      Benchmarking autobot is covered [separately](batch_mode.md).
+      Finally, we have a different tutorial for using autobot for [coding challenges](coding_challenges.md).
 
-!!! tip "Mini-SWE-Agent"
+!!! tip "Mini-autobot"
 
-    Looking for a simple, no-fuzz version of SWE-agent that can also help you in your daily work?
-    Check out [Mini-SWE-Agent](https://mini-swe-agent.com/)!
+    Looking for a simple, no-fuzz version of autobot that can also help you in your daily work?
+    Check out [Mini-autobot](https://mini-autobot.com/)!
 
 ## A few examples
 
 Before we start with a more structured explanation of the command line options, here are a few examples that you might find immediately useful:
 
 ```bash title="Fix a github issue"
-sweagent run \
+autobot run \
   --agent.model.name=gpt-4o \
   --agent.model.per_instance_cost_limit=2.00 \
-  --env.repo.github_url=https://github.com/SWE-agent/test-repo \
-  --problem_statement.github_url=https://github.com/SWE-agent/test-repo/issues/1
+  --env.repo.github_url=https://github.com/autobot/test-repo \
+  --problem_statement.github_url=https://github.com/autobot/test-repo/issues/1
 ```
 
 ```bash title="Work on a github repo with a custom problem statement" hl_lines="4"
-sweagent run \
+autobot run \
   ...
-  --env.repo.github_url=https://github.com/SWE-agent/test-repo \
+  --env.repo.github_url=https://github.com/autobot/test-repo \
   --problem_statement.text="Hey, can you fix all the bugs?"
 ```
 
 ```bash title="Fix a bug in a local repository using a custom docker image" hl_lines="4 5 6"
-git clone https://github.com/SWE-agent/test-repo.git
-sweagent run \
+git clone https://github.com/autobot/test-repo.git
+autobot run \
   --agent.model.name=claude-sonnet-4-20250514 \
   --env.repo.path=test-repo \
   --problem_statement.path=test-repo/problem_statements/1.md \
@@ -49,14 +49,14 @@ For the next example, we will use a cloud-based execution environment instead of
 For this, you first need to set up a modal account, install the necessary extra dependencies `pip install 'swe-rex[modal]'`, then run:
 
 ```bash title="Deployment on modal (cloud-based execution)" hl_lines="3"
-sweagent run \
+autobot run \
   ...
   --env.deployment.type=modal \
   --env.deployment.image=python:3.12
 ```
 
 !!! tip "All options"
-    Run `sweagent run --help` to see all available options for `run.py`. This tutorial will only cover a subset of options.
+    Run `autobot run --help` to see all available options for `run.py`. This tutorial will only cover a subset of options.
 
 ## Configuration files
 
@@ -65,7 +65,7 @@ All configuration options can be specified either in one or more `.yaml` files, 
 === "Command line"
 
     ```bash
-    sweagent run --config my_run.yaml
+    autobot run --config my_run.yaml
     ```
 
 === "Configuration file"
@@ -77,9 +77,9 @@ All configuration options can be specified either in one or more `.yaml` files, 
         per_instance_cost_limit: 2.00
     env:
       repo:
-        github_url: https://github.com/SWE-agent/test-repo
+        github_url: https://github.com/autobot/test-repo
     problem_statement:
-      github_url: https://github.com/SWE-agent/test-repo/issues/1
+      github_url: https://github.com/autobot/test-repo/issues/1
     ```
 
 But we can also split it up into multiple files and additional command line options:
@@ -88,7 +88,7 @@ But we can also split it up into multiple files and additional command line opti
 
     ```bash
     # Note that you need --config in front of every config file
-    sweagent run --config agent.yaml --config env.yaml \
+    autobot run --config agent.yaml --config env.yaml \
         --problem_statement.text="Hey, can you fix all the bugs?"
     ```
 
@@ -106,14 +106,14 @@ But we can also split it up into multiple files and additional command line opti
     ```yaml title="env.yaml"
     env:
       repo:
-        github_url: https://github.com/SWE-agent/test-repo
+        github_url: https://github.com/autobot/test-repo
     ```
 
 !!! warning "Multiple config files"
-    Prior to version SWE-agent 1.1.0, configs were merged with simple dictionary updates,
+    Prior to version autobot 1.1.0, configs were merged with simple dictionary updates,
     rather than a hierarchical merge, so specifying `agent` (or any key with subkeys) in the
     second config would completely overwrite all `agent` settings of the first config.
-    This is fixed since SWE-agent 1.1.0.
+    This is fixed since autobot 1.1.0.
 
 The default config file is `config/default.yaml`. Let's take a look at it:
 
@@ -138,9 +138,9 @@ in addition to all the other `--config` options for the two examples above.
 
 ## Problem statements and union types <a id="union-types"></a>
 
-!!! note "Operating in batch mode: Running on SWE-bench and other benchmark sets"
-    If you want to run SWE-agent in batch mode on SWE-bench or another whole evaluation set, see
-    [batch mode](batch_mode.md). This tutorial focuses on using SWE-agent on
+!!! note "Operating in batch mode: Running on autobot-bench and other benchmark sets"
+    If you want to run autobot in batch mode on autobot-bench or another whole evaluation set, see
+    [batch mode](batch_mode.md). This tutorial focuses on using autobot on
     individual issues.
 
 We've already seen a few examples of how to specify the problem to solve, namely
@@ -154,7 +154,7 @@ We've already seen a few examples of how to specify the problem to solve, namely
 Each of these types of problems can have specific configuration options.
 
 To understand how this works, we'll need to understand **union types**.
-Running `sweagent run` builds up a configuration object that essentially looks like this:
+Running `autobot run` builds up a configuration object that essentially looks like this:
 
 ```yaml
 agent: AgentConfig
@@ -166,18 +166,18 @@ problem_statement: TextProblemStatement | GithubIssue | FileProblemStatement  # 
 
 Each of these configuration objects has its own set of options:
 
-* [`GithubIssue`](../reference/problem_statements.md#sweagent.agent.problem_statement.GithubIssue)
-* [`TextProblemStatement`](../reference/problem_statements.md#sweagent.agent.problem_statement.TextProblemStatement)
-* [`FileProblemStatement`](../reference/problem_statements.md#sweagent.agent.problem_statement.FileProblemStatement)
+* [`GithubIssue`](../reference/problem_statements.md#autobot.agent.problem_statement.GithubIssue)
+* [`TextProblemStatement`](../reference/problem_statements.md#autobot.agent.problem_statement.TextProblemStatement)
+* [`FileProblemStatement`](../reference/problem_statements.md#autobot.agent.problem_statement.FileProblemStatement)
 
 So how do we know which configuration object to initialize?
 It's simple: Each of these types has a different set of required options (e.g., `github_url` is required for `GithubIssue`, but not for `TextProblemStatement`).
-SWE-agent will automatically select the correct configuration object based on the command line options you provide.
+autobot will automatically select the correct configuration object based on the command line options you provide.
 
 However, you can also explicitly specify the type of problem statement you want to use by adding a `--problem_statement.type` option.
 
 !!! tip "Union type errors"
-    If you ever ran a SWE-agent command and got a very long error message about various configuration options not working, it is because for union types.
+    If you ever ran a autobot command and got a very long error message about various configuration options not working, it is because for union types.
     If everything works correctly, we try to initialize every option until we find the one that works based on your inputs (for example stopping at `TextProblemStatement` if you provided a `--problem_statement.text`).
     However, if none of them work, we throw an error which then tells you why we cannot initialize any of the types (so it will tell you that `github_url` is required for `GithubIssue`, even though you might not even have tried to work on a GitHub issue).
 
@@ -187,7 +187,7 @@ However, you can also explicitly specify the type of problem statement you want 
       This is the output of running
 
       ```bash
-      sweagent run --problem_statement.path="test" --problem_statement.github_url="asdf"
+      autobot run --problem_statement.path="test" --problem_statement.github_url="asdf"
       ```
 
       ```
@@ -202,15 +202,15 @@ If you want to read more about how this works, check out the [pydantic docs](htt
 The repository can be specified in a few different ways:
 
 ```bash
---env.repo.github_url=https://github.com/SWE-agent/test-repo
+--env.repo.github_url=https://github.com/autobot/test-repo
 --env.repo.path=/path/to/repo
 ```
 
 Again, those are [union types](#union-types). See here for all the options:
 
-* [`GithubRepoConfig`](../reference/repo.md#sweagent.environment.repo.GithubRepoConfig): Pull a repository from GitHub.
-* [`LocalRepoConfig`](../reference/repo.md#sweagent.environment.repo.LocalRepoConfig): Copies a repository from your local filesystem to the docker container.
-* [`PreExistingRepoConfig`](../reference/repo.md#sweagent.environment.repo.PreExistingRepoConfig): If you want to use a repository that already exists on the docker container.
+* [`GithubRepoConfig`](../reference/repo.md#autobot.environment.repo.GithubRepoConfig): Pull a repository from GitHub.
+* [`LocalRepoConfig`](../reference/repo.md#autobot.environment.repo.LocalRepoConfig): Copies a repository from your local filesystem to the docker container.
+* [`PreExistingRepoConfig`](../reference/repo.md#autobot.environment.repo.PreExistingRepoConfig): If you want to use a repository that already exists on the docker container.
 
 ## Configuring the environment
 
@@ -218,7 +218,7 @@ We mainly recommend you to build a docker image with all the dependencies you ne
 In addition, you can also execute additional commands before starting the agent with `env.post_startup_commands`, which takes a list of commands, e.g.,
 
 ```bash
-sweagent run \
+autobot run \
     --agent.model.name=claude-3-7-sonnet-latest \
     --env.post_startup_commands='["pip install flake8"]' \
     ...
@@ -266,20 +266,20 @@ Click on the :material-chevron-right-circle: icon in the right margin of the cod
 
 ## Taking actions
 
-* You can use `--actions.apply_patch_locally` to have SWE-agent apply successful solution attempts to local files.
+* You can use `--actions.apply_patch_locally` to have autobot apply successful solution attempts to local files.
 * Alternatively, when running on a GitHub issue, you can have the agent automatically open a PR if the issue has been solved by supplying the `--actions.open_pr` flag.
   Please use this feature responsibly (on your own repositories or after careful consideration).
 
 !!! tip "All action options"
-    See [`RunSingleActionConfig`](../reference/run_single_config.md#sweagent.run.run_single.RunSingleActionConfig) for all action options.
+    See [`RunSingleActionConfig`](../reference/run_single_config.md#autobot.run.run_single.RunSingleActionConfig) for all action options.
 
-Alternatively, you can always retrieve the patch that was generated by SWE-agent.
+Alternatively, you can always retrieve the patch that was generated by autobot.
 Watch out for the following message in the log:
 
 
 ```
-╭──────────────────────────── 🎉 Submission successful 🎉 ────────────────────────────╮
-│ SWE-agent has produced a patch that it believes will solve the issue you submitted! │
+╭────────────────────────────  Submission successful  ────────────────────────────╮
+│ autobot has produced a patch that it believes will solve the issue you submitted! │
 │ Use the code snippet below to inspect or apply it!                                  │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 ```

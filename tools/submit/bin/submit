@@ -9,9 +9,9 @@ main() {
 
     git add -A
     git diff --cached > /root/model.patch
-    echo "<<SWE_AGENT_SUBMISSION>>"
+    echo "<<autobot_SUBMISSION>>"
     cat /root/model.patch
-    echo "<<SWE_AGENT_SUBMISSION>>"
+    echo "<<autobot_SUBMISSION>>"
 }
 
 main "$@"

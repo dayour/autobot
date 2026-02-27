@@ -1,5 +1,5 @@
 {
-  "environment": "swe_main",
+  "environment": "sw_main",
   "trajectory": [
     {
       "action": "create reproduce_bug.py\n",

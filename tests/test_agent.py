@@ -4,13 +4,13 @@ from swerex.exceptions import SwerexException
 from swerex.runtime.abstract import Action, BashObservation, Observation
 from swerex.runtime.dummy import DummyRuntime
 
-from sweagent import CONFIG_DIR
-from sweagent.agent.agents import DefaultAgent, DefaultAgentConfig
-from sweagent.agent.models import InstantEmptySubmitModelConfig, PredeterminedTestModel
-from sweagent.agent.problem_statement import EmptyProblemStatement, TextProblemStatement
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.tools.parsing import FunctionCallingParser, Identity, ThoughtActionParser
-from sweagent.tools.tools import ToolConfig
+from autobot import CONFIG_DIR
+from autobot.agent.agents import DefaultAgent, DefaultAgentConfig
+from autobot.agent.models import InstantEmptySubmitModelConfig, PredeterminedTestModel
+from autobot.agent.problem_statement import EmptyProblemStatement, TextProblemStatement
+from autobot.environment.autobot_env import autobotenv
+from autobot.tools.parsing import FunctionCallingParser, Identity, ThoughtActionParser
+from autobot.tools.tools import ToolConfig
 
 
 def test_dummy_env(dummy_env):
@@ -49,7 +49,7 @@ def function_calling_agent_config():
 
 @pytest.fixture
 def default_agent_config():
-    config = yaml.safe_load((CONFIG_DIR / "sweagent_0_7/07.yaml").read_text())
+    config = yaml.safe_load((CONFIG_DIR / "autobot_0_7/07.yaml").read_text())
     config["agent"]["model"] = {"name": "instant_empty_submit"}
     print(yaml.dump(config))
     return DefaultAgentConfig.model_validate(config["agent"])
@@ -77,7 +77,7 @@ def function_calling_agent(function_calling_agent_config: DefaultAgentConfig) ->
     return DefaultAgent.from_config(function_calling_agent_config)
 
 
-def test_exit_cost(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
+def test_exit_cost(dummy_env: autobotenv, test_agent: DefaultAgent, tmp_path):
     test_agent.model = PredeterminedTestModel(["raise_cost"])  # type: ignore
     r = test_agent.run(
         problem_statement=EmptyProblemStatement(),
@@ -87,7 +87,7 @@ def test_exit_cost(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
     assert r.info["exit_status"] == "exit_cost"  # type: ignore
 
 
-def test_exit_context(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
+def test_exit_context(dummy_env: autobotenv, test_agent: DefaultAgent, tmp_path):
     test_agent.model = PredeterminedTestModel(["raise_context"])  # type: ignore
     r = test_agent.run(
         problem_statement=EmptyProblemStatement(),
@@ -97,7 +97,7 @@ def test_exit_context(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
     assert r.info["exit_status"] == "exit_context"  # type: ignore
 
 
-def test_exit_model_error(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
+def test_exit_model_error(dummy_env: autobotenv, test_agent: DefaultAgent, tmp_path):
     test_agent.model = PredeterminedTestModel(["raise_runtime"])  # type: ignore
     r = test_agent.run(
         problem_statement=EmptyProblemStatement(),
@@ -107,7 +107,7 @@ def test_exit_model_error(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path)
     assert r.info["exit_status"] == "exit_environment_error"  # type: ignore
 
 
-def test_exit_format(dummy_env: SWEEnv, thought_action_agent: DefaultAgent, tmp_path):
+def test_exit_format(dummy_env: autobotenv, thought_action_agent: DefaultAgent, tmp_path):
     thought_action_agent.model = PredeterminedTestModel(["a", "b", "c", "d"])  # type: ignore
     r = thought_action_agent.run(
         problem_statement=EmptyProblemStatement(),
@@ -117,7 +117,7 @@ def test_exit_format(dummy_env: SWEEnv, thought_action_agent: DefaultAgent, tmp_
     assert r.info["exit_status"] == "exit_format"  # type: ignore
 
 
-def test_exit_blocklist(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
+def test_exit_blocklist(dummy_env: autobotenv, test_agent: DefaultAgent, tmp_path):
     test_agent.model = PredeterminedTestModel(["vim", "python", "su", "nano"])  # type: ignore
     r = test_agent.run(
         problem_statement=EmptyProblemStatement(),
@@ -134,7 +134,7 @@ class RuntimeRaisesFirst(DummyRuntime):
         return await super().run_in_session(action)
 
 
-def test_early_exit(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
+def test_early_exit(dummy_env: autobotenv, test_agent: DefaultAgent, tmp_path):
     test_agent.model = PredeterminedTestModel(["raise"])  # type: ignore
     test_agent._catch_errors = True
     dummy_env.deployment.runtime = RuntimeRaisesFirst()  # type: ignore
@@ -146,7 +146,7 @@ def test_early_exit(dummy_env: SWEEnv, test_agent: DefaultAgent, tmp_path):
     assert r.info["exit_status"] == "exit_environment_error"  # type: ignore
 
 
-def test_run_step_by_step_checking_history(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
+def test_run_step_by_step_checking_history(dummy_env: autobotenv, default_agent: DefaultAgent, tmp_path):
     a = default_agent
     a.model = PredeterminedTestModel(["asdf", "```\nls\n```", "```\necho 'asdf'\n```", "raise_cost"])  # type: ignore
     a.setup(dummy_env, TextProblemStatement(text="asdf123"))
@@ -188,14 +188,14 @@ def test_run_step_by_step_checking_history(dummy_env: SWEEnv, default_agent: Def
 
 # todo: fixme; Needs real environment or mocking of read_file
 @pytest.mark.xfail
-def test_run_autosubmit(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
+def test_run_autosubmit(dummy_env: autobotenv, default_agent: DefaultAgent, tmp_path):
     a = default_agent
     a.model = PredeterminedTestModel(["raise_cost"])  # type: ignore
     a.setup(dummy_env, EmptyProblemStatement())
     dummy_env.write_file("/root/model.patch", "mysubmission")
     dummy_env.deployment.runtime.run_in_session_outputs = [  # type: ignore
         BashObservation(output=""),
-        BashObservation(output=r"<<SWE_AGENT_SUBMISSION>>\nmysubmission\n<<SWE_AGENT_SUBMISSION>>"),
+        BashObservation(output=r"<<autobot_SUBMISSION>>\nmysubmission\n<<autobot_SUBMISSION>>"),
     ]
     r = a.step()
     assert a.info is not None
@@ -208,7 +208,7 @@ def test_run_autosubmit(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path
     assert "cost limit" in r.thought
 
 
-def test_show_no_output_template(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
+def test_show_no_output_template(dummy_env: autobotenv, default_agent: DefaultAgent, tmp_path):
     a = default_agent
     a.templates.next_step_no_output_template = "no output template"
     a.setup(dummy_env, EmptyProblemStatement())
@@ -221,19 +221,19 @@ def test_show_no_output_template(dummy_env: SWEEnv, default_agent: DefaultAgent,
 
 # todo: fixme; Needs real environment or mocking of read_file
 @pytest.mark.xfail
-def test_successful_submission(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
+def test_successful_submission(dummy_env: autobotenv, default_agent: DefaultAgent, tmp_path):
     a = default_agent
     a.model = PredeterminedTestModel(["```\nsubmit\n```"])  # type: ignore
     a.setup(dummy_env, EmptyProblemStatement())
     dummy_env.write_file("/root/model.patch", "test")
-    dummy_env.deployment.runtime.run_in_session_outputs = BashObservation(output=r"<<SWE_AGENT_SUBMISSION>>")  # type: ignore
+    dummy_env.deployment.runtime.run_in_session_outputs = BashObservation(output=r"<<autobot_SUBMISSION>>")  # type: ignore
     a.step()
     assert a.info["exit_status"] == "submitted"  # type: ignore
     assert a.info["submission"] == "test"  # type: ignore
     assert a.trajectory[-1]["observation"] == "test"
 
 
-def test_human_exit(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
+def test_human_exit(dummy_env: autobotenv, default_agent: DefaultAgent, tmp_path):
     a = default_agent
     a.model = PredeterminedTestModel(["```\nexit\n```"])  # type: ignore
     a.setup(dummy_env, EmptyProblemStatement())
@@ -243,7 +243,7 @@ def test_human_exit(dummy_env: SWEEnv, default_agent: DefaultAgent, tmp_path):
     assert r.action.strip() == "exit"
 
 
-def test_function_calling(dummy_env: SWEEnv, function_calling_agent: DefaultAgent, tmp_path):
+def test_function_calling(dummy_env: autobotenv, function_calling_agent: DefaultAgent, tmp_path):
     a = function_calling_agent
     # Simulate a valid function call response from the model
     valid_response = {

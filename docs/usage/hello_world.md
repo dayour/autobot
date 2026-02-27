@@ -1,34 +1,34 @@
 # Hello world
 
-!!! abstract "Fix a GitHub issue with SWE-agent"
-    In this tutorial, we will fix a GitHub issue with SWE-agent using the command line interface.
+!!! abstract "Fix a GitHub issue with autobot"
+    In this tutorial, we will fix a GitHub issue with autobot using the command line interface.
 
-    * Make sure you have [installed](../installation/index.md) SWE-agent and have a [language model](../installation/keys.md) set up.
+    * Make sure you have [installed](../installation/index.md) autobot and have a [language model](../installation/keys.md) set up.
     * We will be executing code in a Docker sandbox, so make sure you have docker installed ([docker troubleshooting](../installation/tips.md)).
-      If you cannot run docker, skim this tutorial and see how you can run SWE-agent with cloud-based execution in the [command line basics tutorial](cl_tutorial.md).
+      If you cannot run docker, skim this tutorial and see how you can run autobot with cloud-based execution in the [command line basics tutorial](cl_tutorial.md).
 
-!!! tip "Mini-SWE-Agent"
+!!! tip "Mini-autobot"
 
-    Looking for a simple, no-fuzz version of SWE-agent that can also help you in your daily work?
-    Check out [Mini-SWE-Agent](https://mini-swe-agent.com/)!
+    Looking for a simple, no-fuzz version of autobot that can also help you in your daily work?
+    Check out [Mini-autobot](https://mini-autobot.com/)!
 
-After installing SWE-agent, you have the `sweagent` command available. Run `sweagent --help` to see the list of subcommands.
+After installing autobot, you have the `autobot` command available. Run `autobot --help` to see the list of subcommands.
 The most important ones are
 
-* `sweagent run`: Run SWE-agent on a single problem statement. This is covered on this page and for slightly more advanced examples in the [command line basics tutorial](cl_tutorial.md).
-* `sweagent run-batch`: Run SWE-agent on a list of problem statements. This is what you would use for benchmarking, or when
+* `autobot run`: Run autobot on a single problem statement. This is covered on this page and for slightly more advanced examples in the [command line basics tutorial](cl_tutorial.md).
+* `autobot run-batch`: Run autobot on a list of problem statements. This is what you would use for benchmarking, or when
   working with a larger set of historic issues. Covered in the [batch mode tutorial](batch_mode.md).
 
 In this tutorial, we will focus on the `run` subcommand.
 
-Let's start with an absolutely trivial example and solve an issue about a simple syntax error ([`swe-agent/test-repo #1`](https://github.com/SWE-agent/test-repo/issues/1))
+Let's start with an absolutely trivial example and solve an issue about a simple syntax error ([`autobot/test-repo #1`](https://github.com/autobot/test-repo/issues/1))
 
 ```bash
-sweagent run \
+autobot run \
   --agent.model.name=claude-sonnet-4-20250514 \
   --agent.model.per_instance_cost_limit=2.00 \
-  --env.repo.github_url=https://github.com/SWE-agent/test-repo \
-  --problem_statement.github_url=https://github.com/SWE-agent/test-repo/issues/1
+  --env.repo.github_url=https://github.com/autobot/test-repo \
+  --problem_statement.github_url=https://github.com/autobot/test-repo/issues/1
 ```
 
 The example above uses the `Claude Sonnet 4` model from Anthropic. Alternatively, you can for example use `GPT-4o` (from OpenAI)
@@ -71,7 +71,7 @@ As you can see, the command line options are hierarchical. At the top level, the
 
 Watching the output, you can notice several stages:
 
-1. Setting up the **deployment**: SWE-agent lets LMs execute actions in sandboxed environments. It can run these environments
+1. Setting up the **deployment**: autobot lets LMs execute actions in sandboxed environments. It can run these environments
    in docker containers (default), on modal, AWS fargate, or directly on your computer (not recommended).
    When the deployment starts, you will notice a "starting runtime" message that takes a few seconds. The runtime is
    what is executing the commands within your deployment.

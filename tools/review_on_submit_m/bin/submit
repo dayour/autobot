@@ -41,9 +41,9 @@ def main() -> None:
         print(message)
         sys.exit(0)
 
-    print("<<SWE_AGENT_SUBMISSION>>")
+    print("<<autobot_SUBMISSION>>")
     print(patch)
-    print("<<SWE_AGENT_SUBMISSION>>")
+    print("<<autobot_SUBMISSION>>")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 {
     "python.testing.pytestArgs": [
-        "sweagent",
-        "--cov=sweagent/",
+        "autobot",
+        "--cov=autobot/",
         "--cov-report=xml:cov.xml",
         "-n", "auto",
         "tests"

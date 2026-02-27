@@ -1,7 +1,7 @@
 # Competitive runs
 
-!!! abstract "Running swe-agent competitively on benchmarks"
-    This page contains information on our competitive runs on SWE-bench, as well as tips and tricks for evaluating on large batches.
+!!! abstract "Running autobot competitively on benchmarks"
+    This page contains information on our competitive runs on autobot-bench, as well as tips and tricks for evaluating on large batches.
 
     * Please make sure you're familiar with [the command line basics](cl_tutorial.md) and the [batch mode](batch_mode.md)
     * The default examples will be executing code in a Docker sandbox, so make sure you have docker installed ([docker troubleshooting](../installation/tips.md)).
@@ -10,13 +10,13 @@
 ## Current competitive configurations
 
 !!! hint "Most recent configs"
-    You can find all benchmark submission configs [here](https://github.com/SWE-agent/SWE-agent/tree/main/config/benchmarks)
+    You can find all benchmark submission configs [here](https://github.com/autobot/autobot/tree/main/config/benchmarks)
 
-Examples of configurations for SWE-bench submissions:
+Examples of configurations for autobot-bench submissions:
 
-* [250225_anthropic_filemap_simple_review.yaml](https://github.com/SWE-agent/SWE-agent/blob/main/config/250225_anthropic_filemap_simple_review.yaml):
+* [250225_anthropic_filemap_simple_review.yaml](https://github.com/autobot/autobot/blob/main/config/250225_anthropic_filemap_simple_review.yaml):
   This is our current default one-attempt config. It uses `claude-3-7-sonnet-20250219`.
-* [250212_sweagent_heavy_sbl.yaml](https://github.com/SWE-agent/SWE-agent/blob/main/config/250212_sweagent_heavy_sbl.yaml):
+* [250212_autobot_heavy_sbl.yaml](https://github.com/autobot/autobot/blob/main/config/250212_autobot_heavy_sbl.yaml):
   This config runs 5 attempts with slightly different configurations using `claude-3-7-sonnet-latest`,
   then uses o1 to discriminate between them.
   This is a very expensive configuration.
@@ -54,7 +54,7 @@ In our case, this completely avoided any instances of running OOM.
 
 However, OOM situations can potentially lock you out of the server, so
 you might want to use a script like the following as a second layer
-defense to kill any process that hogs too much memory (note that this will affect _any_ script and not just swe-agent):
+defense to kill any process that hogs too much memory (note that this will affect _any_ script and not just autobot):
 
 <details>
 <summary>Memory sentinel</summary>
@@ -65,10 +65,10 @@ defense to kill any process that hogs too much memory (note that this will affec
 
 </details>
 
-If swe-agent dies or you frequently abort it, you might have leftover docker containers
-(they are cleaned up by normal termination of swe-agent but can be left over if it is killed).
+If autobot dies or you frequently abort it, you might have leftover docker containers
+(they are cleaned up by normal termination of autobot but can be left over if it is killed).
 You can use a sentinel script like the following to clean them up periodically
-(note that this will affect _any_ long running container and not just those from swe-agent):
+(note that this will affect _any_ long running container and not just those from autobot):
 
 <details>
 <summary>Container sentinel</summary>
@@ -84,4 +84,4 @@ You can use a sentinel script like the following to clean them up periodically
 * The simplest setting to keep cost in check is the per instance cost limit or turn limit.
   Without limiting cost, the average cost will also converge to infinity, as the agent will never stop iterating.
   With Claude 3.7, a cost-conservative limit would be $1 instance limit or lower and a turn count limit of 50.
-  For our swe-bench submissions we use slightly higher limits (see the configs above).
+  For our autobot-bench submissions we use slightly higher limits (see the configs above).

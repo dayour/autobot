@@ -25,8 +25,8 @@ from tenacity import (
     wait_random_exponential,
 )
 
-from sweagent import REPO_ROOT
-from sweagent.exceptions import (
+from autobot import REPO_ROOT
+from autobot.exceptions import (
     ContentPolicyViolationError,
     ContextWindowExceededError,
     CostLimitExceededError,
@@ -36,9 +36,9 @@ from sweagent.exceptions import (
     ModelConfigurationError,
     TotalCostLimitExceededError,
 )
-from sweagent.tools.tools import ToolConfig
-from sweagent.types import History, HistoryItem
-from sweagent.utils.log import get_logger
+from autobot.tools.tools import ToolConfig
+from autobot.types import History, HistoryItem
+from autobot.utils.log import get_logger
 
 try:
     import readline  # noqa: F401
@@ -165,7 +165,7 @@ class GenericAPIModelConfig(PydanticBaseModel):
             env_var_name = api_key[1:]
             api_key = os.getenv(env_var_name, "")
             if not api_key:
-                get_logger("swea-config", emoji="🔧").warning(f"Environment variable {env_var_name} not set")
+                get_logger("swea-config").warning(f"Environment variable {env_var_name} not set")
                 return []
         return api_key.split(":::")
 
@@ -184,7 +184,7 @@ class GenericAPIModelConfig(PydanticBaseModel):
             _THREADS_THAT_USED_API_KEYS.append(thread_name)
         thread_idx = _THREADS_THAT_USED_API_KEYS.index(thread_name)
         key_idx = thread_idx % len(api_keys)
-        get_logger("config", emoji="🔧").debug(
+        get_logger("config").debug(
             f"Choosing API key {key_idx} for thread {thread_name} (idx {thread_idx})"
         )
         return api_keys[key_idx]
@@ -344,7 +344,7 @@ def _handle_raise_commands(action: str) -> None:
 class HumanModel(AbstractModel):
     def __init__(self, config: HumanModelConfig, tools: ToolConfig):
         """Model that allows for human-in-the-loop"""
-        self.logger = get_logger("swea-lm", emoji="🤖")
+        self.logger = get_logger("swea-lm")
         self.config: HumanModelConfig = config
         self.stats = InstanceStats()
 
@@ -352,7 +352,7 @@ class HumanModel(AbstractModel):
         self.multi_line_command_endings = {
             command.name: command.end_name for command in tools.commands if command.end_name is not None
         }
-        self._readline_histfile = REPO_ROOT / ".swe-agent-human-history"
+        self._readline_histfile = REPO_ROOT / ".autobot-human-history"
         self._load_readline_history()
 
     def _load_readline_history(self) -> None:
@@ -386,7 +386,7 @@ class HumanModel(AbstractModel):
         history: History,
         action_prompt: str = "> ",
     ) -> dict:
-        """Logic for handling user input to pass to SWEEnv"""
+        """Logic for handling user input to pass to autobotenv"""
         action = input(action_prompt)
         self._save_readline_history()
         command_name = action.split()[0] if action.strip() else ""
@@ -445,7 +445,7 @@ class HumanModel(AbstractModel):
 
 class HumanThoughtModel(HumanModel):
     def query(self, history: History, **kwargs) -> dict:
-        """Logic for handling user input (both thought + action) to pass to SWEEnv"""
+        """Logic for handling user input (both thought + action) to pass to autobotenv"""
         thought_all = ""
         thought = input("Thought (end w/ END_THOUGHT): ")
         while True:
@@ -480,7 +480,7 @@ class ReplayModel(AbstractModel):
         self._action_idx = 0
         self.use_function_calling = tools.use_function_calling
         self.submit_command = tools.submit_command
-        self.logger = get_logger("swea-lm", emoji="🤖")
+        self.logger = get_logger("swea-lm")
 
     def _next_replay(self) -> None:
         """Called after last action"""
@@ -488,7 +488,7 @@ class ReplayModel(AbstractModel):
         self._action_idx = 0
 
     def query(self, history: History) -> dict:
-        """Logic for tracking which replay action to pass to SWEEnv"""
+        """Logic for tracking which replay action to pass to autobotenv"""
         self.stats.api_calls += 1
         actions = self._replays[self._replay_idx]
         try:
@@ -582,14 +582,14 @@ class LiteLLMModel(AbstractModel):
         self.config: GenericAPIModelConfig = args.model_copy(deep=True)
         self.stats = InstanceStats()
         self.tools = tools
-        self.logger = get_logger("swea-lm", emoji="🤖")
+        self.logger = get_logger("swea-lm")
 
         if tools.use_function_calling:
             if not litellm.utils.supports_function_calling(model=self.config.name):
                 msg = (
                     f"Model {self.config.name} does not support function calling. If your model"
                     " does not support function calling, you can use `parse_function='thought_action'` instead. "
-                    "See https://swe-agent.com/latest/faq/ for more information."
+                    "See https://autobot.com/latest/faq/ for more information."
                 )
                 self.logger.warning(msg)
         if self.config.litellm_model_registry is not None:
@@ -606,7 +606,7 @@ class LiteLLMModel(AbstractModel):
         else:
             self.model_max_output_tokens = litellm.model_cost.get(self.config.name, {}).get("max_output_tokens")
             # Special handling for Claude 3.7 models to set 64k context by default when beta header not present
-            # See https://github.com/SWE-agent/SWE-agent/pull/1016
+            # See https://github.com/autobot/autobot/pull/1016
             is_claude_3_7 = "claude-3-7-sonnet" in self.config.name or "claude-sonnet-4" in self.config.name
             has_128k_beta_header = (
                 self.config.completion_kwargs.get("extra_headers", {}).get("anthropic-beta") == "output-128k-2025-02-19"
@@ -680,7 +680,7 @@ class LiteLLMModel(AbstractModel):
         self, messages: list[dict[str, str]], n: int | None = None, temperature: float | None = None
     ) -> list[dict]:
         self._sleep()
-        # Workaround for litellm bug https://github.com/SWE-agent/SWE-agent/issues/1109
+        # Workaround for litellm bug https://github.com/autobot/autobot/issues/1109
         messages_no_cache_control = copy.deepcopy(messages)
         for message in messages_no_cache_control:
             if "cache_control" in message:

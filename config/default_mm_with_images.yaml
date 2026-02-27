@@ -1,4 +1,4 @@
-# Configuration for SWE-agent with image viewing capabilities
+# Configuration for autobot with image viewing capabilities
 # This extends the default config with image parsing history processor
 # and the image_tools bundle for viewing images as base64-encoded markdown.
 agent:
@@ -76,7 +76,7 @@ agent:
     # - type: cache_control  # enable for claude
     #   last_n_messages: 2  # enable for claude
 instances:
-  type: swe_bench
+  type: autobot_bench
   subset: multimodal
   split: dev
   shuffle: true

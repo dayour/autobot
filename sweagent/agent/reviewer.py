@@ -13,18 +13,18 @@ import numpy as np
 from jinja2 import Template
 from pydantic import BaseModel, ConfigDict
 
-from sweagent.agent.history_processors import _set_cache_control
-from sweagent.agent.models import (
+from autobot.agent.history_processors import _set_cache_control
+from autobot.agent.models import (
     AbstractModel,
     InstanceStats,
     ModelConfig,
     get_model,
 )
-from sweagent.agent.problem_statement import ProblemStatement
-from sweagent.tools.parsing import ActionParser
-from sweagent.tools.tools import ToolConfig
-from sweagent.types import AgentInfo, Trajectory, TrajectoryStep
-from sweagent.utils.log import get_logger
+from autobot.agent.problem_statement import ProblemStatement
+from autobot.tools.parsing import ActionParser
+from autobot.tools.tools import ToolConfig
+from autobot.types import AgentInfo, Trajectory, TrajectoryStep
+from autobot.utils.log import get_logger
 
 
 class ReviewSubmission(BaseModel):
@@ -243,7 +243,7 @@ class Preselector:
     def __init__(self, config: PreselectorConfig):
         self.config = config
         self.model = get_model(config.model, ToolConfig(parse_function=ActionParser()))
-        self.logger = get_logger("chooser", emoji="🧠")
+        self.logger = get_logger("chooser")
 
     def interpret(self, response: str) -> list[int]:
         if not response:
@@ -293,7 +293,7 @@ class Chooser:
     def __init__(self, config: ChooserConfig):
         self.config = config
         self.model = get_model(config.model, ToolConfig(parse_function=ActionParser()))
-        self.logger = get_logger("chooser", emoji="🧠")
+        self.logger = get_logger("chooser")
         # self.summarizer = Summarizer(config.summarizer, self.model) if config.summarizer else None
 
     def interpret(self, response: str) -> int:
@@ -377,7 +377,7 @@ class Reviewer(AbstractReviewer):
         self._config = config
         self._model = model
         self._traj_formatter = TrajectoryFormatter(config=config.traj_formatter)
-        self.logger = get_logger("reviewer", emoji="🧑‍⚖️")
+        self.logger = get_logger("reviewer")
 
     def format_messages(self, instance: ProblemStatement, submission: ReviewSubmission):
         system_message = self._config.system_template
@@ -503,7 +503,7 @@ class ChooserRetryLoop(AbstractRetryLoop):
         self._chooser = Chooser(config.chooser)
         self._submissions: list[ReviewSubmission] = []
         self._n_consec_exit_cost: int = 0
-        self.logger = get_logger("chooser_loop", emoji="🔄")
+        self.logger = get_logger("chooser_loop")
         self._chooser_output: ChooserOutput | None = None
 
     @property
@@ -573,7 +573,7 @@ class ScoreRetryLoop(AbstractRetryLoop):
         self._reviews: list[ReviewerResult] = []
         #: Number of consecutive exit cost submissions
         self._n_consec_exit_cost: int = 0
-        self.logger = get_logger("review_loop", emoji="🔄")
+        self.logger = get_logger("review_loop")
 
     # Properties
     # ----------

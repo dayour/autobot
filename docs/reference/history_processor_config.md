@@ -12,12 +12,12 @@ agent:
       n: 5
 ```
 
-::: sweagent.agent.history_processors.DefaultHistoryProcessor
+::: autobot.agent.history_processors.DefaultHistoryProcessor
 
-::: sweagent.agent.history_processors.LastNObservations
+::: autobot.agent.history_processors.LastNObservations
 
-::: sweagent.agent.history_processors.TagToolCallObservations
+::: autobot.agent.history_processors.TagToolCallObservations
 
-::: sweagent.agent.history_processors.CacheControlHistoryProcessor
+::: autobot.agent.history_processors.CacheControlHistoryProcessor
 
-::: sweagent.agent.history_processors.RemoveRegex
+::: autobot.agent.history_processors.RemoveRegex

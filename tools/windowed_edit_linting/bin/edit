@@ -5,7 +5,7 @@ import sys
 from typing import Tuple, Union
 
 try:
-    from sweagent import TOOLS_DIR
+    from autobot import TOOLS_DIR
 except ImportError:
     pass
 else:

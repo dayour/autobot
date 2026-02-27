@@ -2,12 +2,12 @@ import argparse
 import json
 from pathlib import Path
 
-from sweagent.utils.log import get_logger
+from autobot.utils.log import get_logger
 
 """Merge multiple predictions into a single file."""
 
 
-logger = get_logger("merge", emoji="➕")
+logger = get_logger("merge")
 
 
 def merge_predictions(directories: list[Path], output: Path | None = None) -> None:

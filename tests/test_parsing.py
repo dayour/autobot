@@ -3,9 +3,9 @@ from __future__ import annotations
 import pytest
 from jinja2 import Template
 
-from sweagent.exceptions import FormatError, FunctionCallingFormatError
-from sweagent.tools.commands import Command
-from sweagent.tools.parsing import (
+from autobot.exceptions import FormatError, FunctionCallingFormatError
+from autobot.tools.commands import Command
+from autobot.tools.parsing import (
     ActionParser,
     EditFormat,
     FunctionCallingParser,

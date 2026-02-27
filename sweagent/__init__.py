@@ -10,7 +10,7 @@ import swerex.utils.log as log_swerex
 from git import Repo
 from packaging import version
 
-from sweagent.utils.log import get_logger
+from autobot.utils.log import get_logger
 
 __version__ = "1.1.0"
 PYTHON_MINIMUM_VERSION = (3, 11)
@@ -18,9 +18,9 @@ SWEREX_MINIMUM_VERSION = "1.2.0"
 SWEREX_RECOMMENDED_VERSION = "1.2.1"
 
 # Monkey patch the logger to use our implementation
-log_swerex.get_logger = partial(get_logger, emoji="🦖")
+log_swerex.get_logger = partial(get_logger)
 
-# See https://github.com/SWE-agent/SWE-agent/issues/585
+# See https://github.com/autobot/autobot/issues/585
 getLogger("datasets").setLevel(WARNING)
 getLogger("numexpr.utils").setLevel(WARNING)
 getLogger("LiteLLM").setLevel(WARNING)
@@ -30,25 +30,25 @@ PACKAGE_DIR = Path(__file__).resolve().parent
 if sys.version_info < PYTHON_MINIMUM_VERSION:
     msg = (
         f"Python {sys.version_info.major}.{sys.version_info.minor} is not supported. "
-        "SWE-agent requires Python 3.11 or higher."
+        "autobot requires Python 3.11 or higher."
     )
     raise RuntimeError(msg)
 
 assert PACKAGE_DIR.is_dir(), PACKAGE_DIR
 REPO_ROOT = PACKAGE_DIR.parent
 assert REPO_ROOT.is_dir(), REPO_ROOT
-CONFIG_DIR = Path(os.getenv("SWE_AGENT_CONFIG_DIR", PACKAGE_DIR.parent / "config"))
+CONFIG_DIR = Path(os.getenv("autobot_CONFIG_DIR", PACKAGE_DIR.parent / "config"))
 assert CONFIG_DIR.is_dir(), CONFIG_DIR
 
-TOOLS_DIR = Path(os.getenv("SWE_AGENT_TOOLS_DIR", PACKAGE_DIR.parent / "tools"))
+TOOLS_DIR = Path(os.getenv("autobot_TOOLS_DIR", PACKAGE_DIR.parent / "tools"))
 assert TOOLS_DIR.is_dir(), TOOLS_DIR
 
-TRAJECTORY_DIR = Path(os.getenv("SWE_AGENT_TRAJECTORY_DIR", PACKAGE_DIR.parent / "trajectories"))
+TRAJECTORY_DIR = Path(os.getenv("autobot_TRAJECTORY_DIR", PACKAGE_DIR.parent / "trajectories"))
 assert TRAJECTORY_DIR.is_dir(), TRAJECTORY_DIR
 
 
 def get_agent_commit_hash() -> str:
-    """Get the commit hash of the current SWE-agent commit.
+    """Get the commit hash of the current autobot commit.
 
     If we cannot get the hash, we return an empty string.
     """
@@ -79,7 +79,7 @@ def get_agent_version_info() -> str:
     hash = get_agent_commit_hash()
     rex_hash = get_rex_commit_hash()
     rex_version = get_rex_version()
-    return f"This is SWE-agent version {__version__} ({hash=}) with SWE-ReX version {rex_version} ({rex_hash=})."
+    return f"This is autobot version {__version__} ({hash=}) with SWE-ReX version {rex_version} ({rex_hash=})."
 
 
 def impose_rex_lower_bound() -> None:
@@ -98,11 +98,11 @@ def impose_rex_lower_bound() -> None:
             "running `pip install --upgrade swe-rex`."
             "You can also rerun `pip install -e .` in this repository to install the latest version."
         )
-        get_logger("swe-agent", emoji="👋").warning(msg)
+        get_logger("autobot").warning(msg)
 
 
 impose_rex_lower_bound()
-get_logger("swe-agent", emoji="👋").info(get_agent_version_info())
+get_logger("autobot").info(get_agent_version_info())
 
 
 __all__ = [

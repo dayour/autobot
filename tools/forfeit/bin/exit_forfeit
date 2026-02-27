@@ -1,5 +1,5 @@
 main() {
-    echo "###SWE-AGENT-EXIT-FORFEIT###"
+    echo "###autobot-EXIT-FORFEIT###"
 }
 
 main "$@"

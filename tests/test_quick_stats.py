@@ -4,7 +4,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from sweagent.run.quick_stats import quick_stats
+from autobot.run.quick_stats import quick_stats
 
 
 def test_quick_stats_empty_directory():

@@ -29,8 +29,8 @@ def _get_commit(api: GhApi, owner: str, repo: str, ref: str | None = None):
 
     Args:
         api (GhApi):
-        owner (str): Repo owner, e.g., "SWE-agent"
-        repo (str): Repo, e.g., "SWE-agent"
+        owner (str): Repo owner, e.g., "autobot"
+        repo (str): Repo, e.g., "autobot"
         ref (str, optional): Branch, tag or commit hash
 
     Returns:

@@ -1,6 +1,6 @@
 from typing import Any, Literal
 
-"""This module contains all custom exceptions used by the SWE-agent."""
+"""This module contains all custom exceptions used by the autobot."""
 
 
 class FormatError(Exception):

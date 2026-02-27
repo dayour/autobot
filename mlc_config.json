@@ -28,7 +28,7 @@
       "pattern": "https://jsoneditoronline.org/.*"
     },
     {
-      "pattern": ".*\\.md/#sweagent\\..*"
+      "pattern": ".*\\.md/#autobot\\..*"
     },
     {
       "pattern": "^(?!https).*(?<!\\.md)$"

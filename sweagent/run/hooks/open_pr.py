@@ -5,23 +5,23 @@ import shlex
 from ghapi.all import GhApi
 from pydantic import BaseModel
 
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.run.hooks.abstract import RunHook
-from sweagent.types import AgentRunResult
-from sweagent.utils.github import (
+from autobot.environment.autobot_env import autobotenv
+from autobot.run.hooks.abstract import RunHook
+from autobot.types import AgentRunResult
+from autobot.utils.github import (
     InvalidGithubURL,
     _get_associated_commit_urls,
     _get_gh_issue_data,
     _parse_gh_issue_url,
 )
-from sweagent.utils.log import get_logger
+from autobot.utils.log import get_logger
 
 # NOTE
 # THE IMPLEMENTATION DETAILS HERE WILL CHANGE SOON!
 
 
 # fixme: Bring back the ability to open the PR to a fork
-def open_pr(*, logger, token, env: SWEEnv, github_url, trajectory, _dry_run: bool = False) -> None:
+def open_pr(*, logger, token, env: autobotenv, github_url, trajectory, _dry_run: bool = False) -> None:
     """Create PR to repository
 
     Args:
@@ -36,9 +36,9 @@ def open_pr(*, logger, token, env: SWEEnv, github_url, trajectory, _dry_run: boo
     except InvalidGithubURL as e:
         msg = "Data path must be a github issue URL if open_pr is set to True."
         raise ValueError(msg) from e
-    branch_name = f"swe-agent-fix-#{issue.number}-" + str(random.random())[2:10]
+    branch_name = f"autobot-fix-#{issue.number}-" + str(random.random())[2:10]
     env.communicate(
-        input="git config user.email 'noemail@swe-agent.com' && git config user.name 'SWE-agent'",
+        input="git config user.email 'noemail@autobot.com' && git config user.name 'autobot'",
         error_msg="Failed to set git user",
         timeout=10,
         check="raise",
@@ -92,7 +92,7 @@ def open_pr(*, logger, token, env: SWEEnv, github_url, trajectory, _dry_run: boo
     )
     logger.debug(f"Pushed commit to {remote=} {branch_name=}: {out}")
     body = (
-        f"This is a PR opened by AI tool [SWE Agent](https://github.com/SWE-agent/SWE-agent/) "
+        f"This is a PR opened by AI tool [SWE Agent](https://github.com/autobot/autobot/) "
         f"to close [#{issue.number}]({issue_url}) ({issue.title}).\n\nCloses #{issue.number}."
     )
     body += "\n\n" + format_trajectory_markdown(trajectory, char_limit=60_000)
@@ -102,7 +102,7 @@ def open_pr(*, logger, token, env: SWEEnv, github_url, trajectory, _dry_run: boo
         args = dict(
             owner=owner,
             repo=repo,
-            title=f"SWE-agent[bot] PR to fix: {issue.title}",
+            title=f"autobot[bot] PR to fix: {issue.title}",
             head=head,
             base=default_branch,
             body=body,
@@ -111,7 +111,7 @@ def open_pr(*, logger, token, env: SWEEnv, github_url, trajectory, _dry_run: boo
         logger.debug(f"Creating PR with args: {args}")
         pr_info = api.pulls.create(**args)  # type: ignore
         logger.info(
-            f"🎉 PR created as a draft at {pr_info.html_url}. Please review it carefully, push "
+            f" PR created as a draft at {pr_info.html_url}. Please review it carefully, push "
             "any required changes onto the branch and then click "
             "'Ready for Review' to bring it to the attention of the maintainers.",
         )
@@ -128,7 +128,7 @@ class OpenPRHook(RunHook):
     """This hook opens a PR if the issue is solved and the user has enabled the option."""
 
     def __init__(self, config: OpenPRConfig):
-        self.logger = get_logger("swea-open_pr", emoji="⚡️")
+        self.logger = get_logger("swea-open_pr")
         self._config = config
 
     def on_init(self, *, run):
@@ -198,7 +198,7 @@ def format_trajectory_markdown(trajectory: list[dict[str, str]], char_limit: int
     """
     prefix = [
         "<details>",
-        "<summary>Thought process ('trajectory') of SWE-agent (click to expand)</summary>",
+        "<summary>Thought process ('trajectory') of autobot (click to expand)</summary>",
         "",
         "",
     ]
@@ -214,9 +214,9 @@ def format_trajectory_markdown(trajectory: list[dict[str, str]], char_limit: int
 
     for i, step in enumerate(trajectory):
         step_strs = [
-            f"**🧑‍🚒 Response ({i})**: ",
+            f"**Response ({i})**: ",
             f"{step['response'].strip()}",
-            f"**👀‍ Observation ({i})**:",
+            f"**Observation ({i})**:",
             "```",
             f"{_remove_triple_backticks(step['observation']).strip()}",
             "```",

@@ -2,7 +2,7 @@ import re
 from collections.abc import Callable
 from typing import Any
 
-from sweagent.tools.commands import Command
+from autobot.tools.commands import Command
 
 
 def _guard_multiline_input(action: str, match_fct: Callable[[str], re.Match | None]) -> str:

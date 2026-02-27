@@ -28,7 +28,7 @@ def _interpret_level(level: int | str | None, *, default=logging.DEBUG) -> int:
     return getattr(logging, level.upper())
 
 
-_STREAM_LEVEL = _interpret_level(os.environ.get("SWE_AGENT_LOG_STREAM_LEVEL"))
+_STREAM_LEVEL = _interpret_level(os.environ.get("autobot_LOG_STREAM_LEVEL"))
 _INCLUDE_LOGGER_NAME_IN_STREAM_HANDLER = False
 
 _THREAD_NAME_TO_LOG_SUFFIX: dict[str, str] = {}
@@ -41,22 +41,27 @@ def register_thread_name(name: str) -> None:
     _THREAD_NAME_TO_LOG_SUFFIX[thread_name] = name
 
 
-class _RichHandlerWithEmoji(RichHandler):
-    def __init__(self, emoji: str, *args, **kwargs):
-        """Subclass of RichHandler that adds an emoji to the log message."""
+class _RichHandlerWithLabel(RichHandler):
+    def __init__(self, label: str = "", *args, **kwargs):
+        """Subclass of RichHandler that adds an optional label prefix to the log message."""
         super().__init__(*args, **kwargs)
-        if not emoji.endswith(" "):
-            emoji += " "
-        self.emoji = emoji
+        if label and not label.endswith(" "):
+            label += " "
+        self.label = label
 
     def get_level_text(self, record: logging.LogRecord) -> Text:
         level_name = record.levelname.replace("WARNING", "WARN")
-        return Text.styled((self.emoji + level_name).ljust(10), f"logging.level.{level_name.lower()}")
+        return Text.styled((self.label + level_name).ljust(10), f"logging.level.{level_name.lower()}")
 
 
-def get_logger(name: str, *, emoji: str = "") -> logging.Logger:
+def get_logger(name: str, *, emoji: str = "", label: str = "") -> logging.Logger:
     """Get logger. Use this instead of `logging.getLogger` to ensure
     that the logger is set up with the correct handlers.
+
+    Args:
+        name: Logger name.
+        emoji: Deprecated, ignored. Use label instead.
+        label: Optional label prefix for log messages.
     """
     thread_name = threading.current_thread().name
     if thread_name != "MainThread":
@@ -65,9 +70,9 @@ def get_logger(name: str, *, emoji: str = "") -> logging.Logger:
     if logger.hasHandlers():
         # Already set up
         return logger
-    handler = _RichHandlerWithEmoji(
-        emoji=emoji,
-        show_time=bool(os.environ.get("SWE_AGENT_LOG_TIME", False)),
+    handler = _RichHandlerWithLabel(
+        label=label,
+        show_time=bool(os.environ.get("autobot_LOG_TIME", False)),
         show_path=False,
     )
     handler.setLevel(_STREAM_LEVEL)
@@ -143,7 +148,7 @@ def remove_file_handler(id_: str) -> None:
 
 def _add_logger_name_to_stream_handler(logger: logging.Logger) -> None:
     for handler in logger.handlers:
-        if isinstance(handler, _RichHandlerWithEmoji):
+        if isinstance(handler, _RichHandlerWithLabel):
             formatter = logging.Formatter("[%(name)s] %(message)s")
             handler.setFormatter(formatter)
 
@@ -169,7 +174,7 @@ def set_stream_handler_levels(level: int) -> None:
         for name in _SET_UP_LOGGERS:
             logger = logging.getLogger(name)
             for handler in logger.handlers:
-                if isinstance(handler, _RichHandlerWithEmoji):
+                if isinstance(handler, _RichHandlerWithLabel):
                     current_level = handler.level
                     if current_level < level:
                         handler.setLevel(level)

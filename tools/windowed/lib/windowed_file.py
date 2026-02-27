@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, List, Optional, Tuple, Union
 
 try:
-    from sweagent import TOOLS_DIR
+    from autobot import TOOLS_DIR
 except ImportError:
     pass
 else:

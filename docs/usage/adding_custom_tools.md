@@ -1,14 +1,14 @@
 # Adding Custom Tools
 
-!!! abstract "Adding custom tools to SWE-agent"
-    This tutorial walks you through creating and integrating custom tools into SWE-agent.
+!!! abstract "Adding custom tools to autobot"
+    This tutorial walks you through creating and integrating custom tools into autobot.
     We'll create a fun `print_cat` command that prints ASCII art of a cat for morale boost!
 
     Please read our [hello world](hello_world.md) and [command line basics](cl_tutorial.md) tutorials before proceeding.
 
 ## Understanding Tool Structure
 
-Every SWE-agent tool is organized as a "bundle" - a directory containing:
+Every autobot tool is organized as a "bundle" - a directory containing:
 
 1. **`config.yaml`** - Defines the tool's interface and documentation
 2. **`bin/`** directory - Contains the executable scripts
@@ -39,7 +39,7 @@ Create the executable script that will be called when the agent runs your comman
 
 # print_cat - A morale-boosting ASCII cat printer!
 
-echo "🐱 Here's a cat to boost your morale! 🐱"
+echo "cat Here's a cat to boost your morale! cat"
 echo ""
 cat << 'EOF'
  /\_/\
@@ -49,7 +49,7 @@ cat << 'EOF'
 (_____)
 EOF
 echo ""
-echo "You're doing great! Keep coding! 💪"
+echo "You're doing great! Keep coding! "
 ```
 
 If you're wondering about the strange `EOF` construct, those are called
@@ -58,7 +58,7 @@ arguments in bash.
 
 ## Step 2: Define the Tool Configuration
 
-Create the `config.yaml` file that tells SWE-agent about your tool:
+Create the `config.yaml` file that tells autobot about your tool:
 
 ```yaml title="tools/morale_boost/config.yaml"
 tools:
@@ -96,7 +96,7 @@ tools:
 
 ## Step 3: Tell the agent to use the new tool
 
-Now you need to tell SWE-agent to use your new tool. Copy `config/default.yaml` to `config/my_custom_config.yaml`
+Now you need to tell autobot to use your new tool. Copy `config/default.yaml` to `config/my_custom_config.yaml`
 and make the following modification
 
 ```yaml title="config/my_custom_config.yaml"
@@ -118,13 +118,13 @@ agent:
 
 ## Step 4: Let's test it
 
-Now you can test your tool by running SWE-agent with your custom configuration:
+Now you can test your tool by running autobot with your custom configuration:
 
 ```bash
-sweagent run \
+autobot run \
   --config config/my_custom_config.yaml \
   --agent.model.name=gpt-4o \
-  --env.repo.github_url=https://github.com/SWE-agent/test-repo \
+  --env.repo.github_url=https://github.com/autobot/test-repo \
   --problem_statement.text="Add a simple hello world function to the repository. Feel free to use print_cat for morale!"
 ```
 
@@ -168,7 +168,7 @@ If you prefer Python, you can create Python-based tools:
 A morale-boosting cat printer in Python!
 """
 
-print("🐱 Here's a cat to boost your morale! 🐱")
+print("cat Here's a cat to boost your morale! cat")
 ```
 
 If your Python tool needs additional dependencies, create an `install.sh` script:
@@ -181,7 +181,7 @@ If your Python tool needs additional dependencies, create an `install.sh` script
 pip install cowsay
 pip install colorama
 
-echo "Morale boost tools installed! Ready to spread joy! 🎉"
+echo "Morale boost tools installed! Ready to spread joy! "
 ```
 
 ### Environment Variables and Context
@@ -226,9 +226,9 @@ Your tools can then access these variables:
 #!/bin/bash
 
 if [ -n "$GITHUB_TOKEN" ]; then
-    echo "🐱 Connected to GitHub! Ready to boost morale across repos!"
+    echo "cat Connected to GitHub! Ready to boost morale across repos!"
 else
-    echo "🐱 Just a local morale booster today!"
+    echo "cat Just a local morale booster today!"
 fi
 ```
 
@@ -274,12 +274,12 @@ def main():
     if messages:
         import random
         message = random.choice(messages)
-        print(f"🐱 {message}")
+        print(f"cat {message}")
 
     # Set a value (persists across tool calls)
     registry["LAST_MORALE_BOOST"] = "2024-01-15 10:30:00"
 
-    print("Morale boosted! 🚀")
+    print("Morale boosted!")
 
 if __name__ == "__main__":
     main()
@@ -294,7 +294,7 @@ if __name__ == "__main__":
 CUSTOM_SETTING=$(_read_env "MY_CUSTOM_SETTING" "default value")
 DEBUG_MODE=$(_read_env "DEBUG_MODE" "false")
 
-echo "🐱 Custom setting: $CUSTOM_SETTING"
+echo "cat Custom setting: $CUSTOM_SETTING"
 
 if [ "$DEBUG_MODE" = "true" ]; then
     echo "Debug mode is enabled!"

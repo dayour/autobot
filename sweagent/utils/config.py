@@ -6,16 +6,16 @@ from typing import Any
 
 from dotenv import load_dotenv
 
-from sweagent import REPO_ROOT
-from sweagent.utils.log import get_logger
+from autobot import REPO_ROOT
+from autobot.utils.log import get_logger
 
-logger = get_logger("swea-config", emoji="🔧")
+logger = get_logger("swea-config")
 
 
 def _convert_path_relative_to_repo_root(path: Path | str, root: Path | None = None) -> Path | str:
     original_type = type(path)
     path = Path(path).resolve()
-    root = Path(root or os.getenv("SWE_AGENT_CONFIG_ROOT", REPO_ROOT))
+    root = Path(root or os.getenv("autobot_CONFIG_ROOT", REPO_ROOT))
     relative_path = path.relative_to(root) if root in path.parents else path
     return relative_path if original_type is Path else str(relative_path)
 
@@ -28,7 +28,7 @@ def _could_be_a_path(v: Any) -> bool:
 
 
 def _strip_abspath_from_dict(value: dict | list | str, root: Path | None = None) -> dict | list | str:
-    root = Path(root or os.getenv("SWE_AGENT_CONFIG_ROOT", REPO_ROOT))
+    root = Path(root or os.getenv("autobot_CONFIG_ROOT", REPO_ROOT))
     if isinstance(value, dict):
         return {k: _strip_abspath_from_dict(v, root) for k, v in value.items()}
     elif isinstance(value, list):
@@ -41,11 +41,11 @@ def _strip_abspath_from_dict(value: dict | list | str, root: Path | None = None)
 
 def _convert_path_to_abspath(path: Path | str) -> Path:
     """If path is not absolute, convert it to an absolute path
-    using the SWE_AGENT_CONFIG_ROOT environment variable (if set) or
+    using the autobot_CONFIG_ROOT environment variable (if set) or
     REPO_ROOT as base.
     """
     path = Path(path)
-    root = Path(os.getenv("SWE_AGENT_CONFIG_ROOT", REPO_ROOT))
+    root = Path(os.getenv("autobot_CONFIG_ROOT", REPO_ROOT))
     assert root.is_dir()
     if not path.is_absolute():
         path = root / path

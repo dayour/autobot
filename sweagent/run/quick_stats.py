@@ -6,11 +6,11 @@ from pathlib import Path
 
 import numpy as np
 
-from sweagent.utils.log import get_logger
+from autobot.utils.log import get_logger
 
 """Calculate statistics from .traj files."""
 
-logger = get_logger("quick-stats", emoji="📊")
+logger = get_logger("quick-stats")
 
 
 def quick_stats(directory: Path | str = ".") -> str:

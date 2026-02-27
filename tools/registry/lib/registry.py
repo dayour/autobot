@@ -9,8 +9,8 @@ class EnvRegistry:
     calls without using environment variables (which are problematic because you cannot
     set them in a subprocess).
 
-    The default file location is `/root/.swe-agent-env`, though this can be overridden
-    by the `env_file` argument or the `SWE_AGENT_ENV_FILE` environment variable.
+    The default file location is `/root/.autobot-env`, though this can be overridden
+    by the `env_file` argument or the `autobot_ENV_FILE` environment variable.
     """
 
     def __init__(self, env_file: Optional[Path] = None):
@@ -19,7 +19,7 @@ class EnvRegistry:
     @property
     def env_file(self) -> Path:
         if self._env_file is None:
-            env_file = Path(os.environ.get("SWE_AGENT_ENV_FILE", "/root/.swe-agent-env"))
+            env_file = Path(os.environ.get("autobot_ENV_FILE", "/root/.autobot-env"))
         else:
             env_file = self._env_file
         if not env_file.exists():

@@ -1,4 +1,4 @@
-"""[cyan][bold]Run SWE-agent in semi-interactive mode.[/bold][/cyan]
+"""[cyan][bold]Run autobot in semi-interactive mode.[/bold][/cyan]
 
 [cyan][bold]sweagen-sh is EXPERIMENTAL[/bold][/cyan]
 
@@ -19,28 +19,28 @@ import yaml
 from rich.prompt import Prompt
 from swerex.deployment.config import DockerDeploymentConfig
 
-from sweagent import CONFIG_DIR
-from sweagent.agent.agents import AbstractAgent, ShellAgentConfig
-from sweagent.agent.extra.shell_agent import ShellAgent
-from sweagent.agent.problem_statement import (
+from autobot import CONFIG_DIR
+from autobot.agent.agents import AbstractAgent, ShellAgentConfig
+from autobot.agent.extra.shell_agent import ShellAgent
+from autobot.agent.problem_statement import (
     GithubIssue,
     ProblemStatement,
     ProblemStatementConfig,
     TextProblemStatement,
 )
-from sweagent.environment.repo import PreExistingRepoConfig
-from sweagent.environment.swe_env import EnvironmentConfig, SWEEnv
-from sweagent.run.common import save_predictions
-from sweagent.run.hooks.abstract import CombinedRunHooks, RunHook
-from sweagent.utils.config import load_environment_variables
-from sweagent.utils.github import _is_github_issue_url
-from sweagent.utils.log import add_file_handler, get_logger, set_stream_handler_levels
+from autobot.environment.repo import PreExistingRepoConfig
+from autobot.environment.autobot_env import EnvironmentConfig, autobotenv
+from autobot.run.common import save_predictions
+from autobot.run.hooks.abstract import CombinedRunHooks, RunHook
+from autobot.utils.config import load_environment_variables
+from autobot.utils.github import _is_github_issue_url
+from autobot.utils.log import add_file_handler, get_logger, set_stream_handler_levels
 
 
 class RunShell:
     def __init__(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         agent: AbstractAgent,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         *,
@@ -50,7 +50,7 @@ class RunShell:
         """Note: When initializing this class, make sure to add the hooks that are required by your actions.
         See `from_config` for an example.
         """
-        self.logger = get_logger("swea-run", emoji="🏃")
+        self.logger = get_logger("swea-run")
         instance_id = problem_statement.id
         _log_filename_template = f"{instance_id}.{{level}}.log"
         for level in ["trace", "debug", "info"]:
@@ -135,7 +135,7 @@ def run_from_cli(args: list[str] | None = None):
     )
     agent_config = ShellAgentConfig.model_validate(yaml.safe_load(cli_args.config.read_text())["agent"])
     agent = ShellAgent.from_config(agent_config)
-    env = SWEEnv.from_config(env_config)
+    env = autobotenv.from_config(env_config)
     if cli_args.repo is None:
         cli_args.repo = Path(Prompt.ask("[cyan]Repository path[/cyan]", default="", show_default=False))
     problem_input = cli_args.p
@@ -147,7 +147,7 @@ def run_from_cli(args: list[str] | None = None):
         problem_statement = TextProblemStatement(
             text=problem_input,
         )
-    run_shell = RunShell(env, agent, problem_statement=problem_statement, output_dir=Path.home() / "sweagent_shell")
+    run_shell = RunShell(env, agent, problem_statement=problem_statement, output_dir=Path.home() / "autobot_shell")
     run_shell.run()
 
 

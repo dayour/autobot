@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from sweagent.run.run import main
+from autobot.run.run import main
 
 
 @pytest.mark.slow
@@ -90,7 +90,7 @@ def test_empty_instances_expert(test_data_sources_path: Path, tmp_path: Path):
 
 # This doesn't work because we need to retrieve environment variables from the environment
 # in order to format our templates.
-# def test_run_batch_swe_bench_instances(tmp_path: Path):
+# def test_run_batch_autobot_bench_instances(tmp_path: Path):
 #     cmd = [
 #         "run-batch",
 #         "--agent.model.name",

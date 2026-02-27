@@ -1,13 +1,13 @@
 from pathlib import Path
 from typing import Self
 
-from sweagent.agent.agents import DefaultAgent, ShellAgentConfig
-from sweagent.agent.models import HumanModel, HumanModelConfig, get_model
-from sweagent.agent.problem_statement import ProblemStatement, ProblemStatementConfig
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.tools.parsing import ActionOnlyParser
-from sweagent.tools.tools import ToolHandler
-from sweagent.types import AgentRunResult, StepOutput
+from autobot.agent.agents import DefaultAgent, ShellAgentConfig
+from autobot.agent.models import HumanModel, HumanModelConfig, get_model
+from autobot.agent.problem_statement import ProblemStatement, ProblemStatementConfig
+from autobot.environment.autobot_env import autobotenv
+from autobot.tools.parsing import ActionOnlyParser
+from autobot.tools.tools import ToolHandler
+from autobot.types import AgentRunResult, StepOutput
 
 
 class ShellAgent(DefaultAgent):
@@ -58,7 +58,7 @@ class ShellAgent(DefaultAgent):
 
     def run(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         *,
         output_dir: Path = Path("."),

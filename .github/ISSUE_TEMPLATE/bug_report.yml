@@ -7,7 +7,7 @@ body:
   attributes:
     value: >
       #### Before submitting a bug, please make sure the issue hasn't been already
-      addressed by searching through [the past issues](https://github.com/SWE-agent/SWE-agent/issues).
+      addressed by searching through [the past issues](https://github.com/autobot/autobot/issues).
 - type: textarea
   attributes:
     label: Describe the bug
@@ -47,9 +47,9 @@ body:
   attributes:
     label: System Information
     description: |
-      Please tell us what OS and processor architecture you are using, your Python version, and the `swebench` package version if applicable.
+      Please tell us what OS and processor architecture you are using, your Python version, and the `autobotbench` package version if applicable.
     placeholder: >
-      e.g. MacOS M1, Python 3.9, swebench 1.0.1
+      e.g. MacOS M1, Python 3.9, autobotbench 1.0.1
   validations:
     required: true
 - type: checkboxes
@@ -69,4 +69,4 @@ body:
 - type: markdown
   attributes:
     value: >
-      Thanks for contributing 🎉!
+      Thanks for contributing !

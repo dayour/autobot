@@ -3,7 +3,7 @@
 import argparse
 
 try:
-    from sweagent import TOOLS_DIR
+    from autobot import TOOLS_DIR
 except ImportError:
     pass
 else:
@@ -17,7 +17,7 @@ else:
 from windowed_file import FileNotOpened, TextNotFound, WindowedFile  # type: ignore
 from flake8_utils import flake8, format_flake8_output  # type: ignore
 
-RETRY_WITH_OUTPUT_TOKEN = "###SWE-AGENT-RETRY-WITH-OUTPUT###"
+RETRY_WITH_OUTPUT_TOKEN = "###autobot-RETRY-WITH-OUTPUT###"
 
 _NOT_FOUND = """Your edit was not applied (file not modified): Text {search!r} not found in displayed lines (or anywhere in the file).
 Please modify your search string. Did you forget to properly handle whitespace/indentation?

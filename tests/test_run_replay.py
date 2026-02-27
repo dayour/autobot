@@ -5,13 +5,13 @@ import subprocess
 import pytest
 from swerex.deployment.config import DockerDeploymentConfig
 
-from sweagent.run.run_replay import RunReplay, RunReplayConfig
+from autobot.run.run_replay import RunReplay, RunReplayConfig
 
 
 @pytest.fixture
-def rr_config(swe_agent_test_repo_traj, tmp_path, swe_agent_test_repo_clone):
+def rr_config(autobot_test_repo_traj, tmp_path, autobot_test_repo_clone):
     return RunReplayConfig(
-        traj_path=swe_agent_test_repo_traj,
+        traj_path=autobot_test_repo_traj,
         deployment=DockerDeploymentConfig(image="python:3.11"),
         output_dir=tmp_path,
     )
@@ -24,7 +24,7 @@ def test_replay(rr_config):
 
 def test_run_cli_help():
     args = [
-        "sweagent",
+        "autobot",
         "run-replay",
         "--help",
     ]

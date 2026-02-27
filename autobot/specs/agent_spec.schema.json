@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://autobot.dev/schemas/agent_spec.schema.json",
+  "title": "Copilot Studio Agent Specification",
+  "description": "Schema for defining a Copilot Studio agent to be scaffolded, configured, and published by the autobot CS Builder swarm.",
+  "type": "object",
+  "required": ["name", "publisher", "environments", "channels"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[A-Za-z][A-Za-z0-9_ -]*$",
+      "description": "Display name of the Copilot Studio agent."
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Brief description of the agent's purpose."
+    },
+    "publisher": {
+      "type": "object",
+      "required": ["displayName", "prefix"],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Publisher display name for the Power Platform solution."
+        },
+        "prefix": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]{1,7}$",
+          "description": "Solution prefix (2-8 lowercase alphanumeric, starts with letter). Used for all customizations."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Publisher contact email."
+        }
+      },
+      "additionalProperties": false
+    },
+    "environments": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Source (development) environment name or ID."
+        },
+        "targets": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true,
+          "description": "Target environments for deployment (e.g., test, prod)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "knowledgeSources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["sharepoint", "web", "file", "dataverse"],
+            "description": "Type of knowledge source."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL for sharepoint or web sources."
+          },
+          "scope": {
+            "type": "string",
+            "enum": ["site", "library", "folder"],
+            "description": "Scope for SharePoint sources."
+          },
+          "depth": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 2,
+            "description": "Crawl depth for web sources."
+          },
+          "path": {
+            "type": "string",
+            "description": "Local path or glob for file sources."
+          },
+          "table": {
+            "type": "string",
+            "description": "Dataverse table logical name."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of this knowledge source."
+          }
+        },
+        "allOf": [
+          {
+            "if": { "properties": { "type": { "const": "sharepoint" } } },
+            "then": { "required": ["url"] }
+          },
+          {
+            "if": { "properties": { "type": { "const": "web" } } },
+            "then": { "required": ["url"] }
+          },
+          {
+            "if": { "properties": { "type": { "const": "file" } } },
+            "then": { "required": ["path"] }
+          },
+          {
+            "if": { "properties": { "type": { "const": "dataverse" } } },
+            "then": { "required": ["table"] }
+          }
+        ],
+        "additionalProperties": false
+      },
+      "description": "Knowledge sources the agent can reference."
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "connector", "auth"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+            "description": "Unique action name."
+          },
+          "connector": {
+            "type": "string",
+            "description": "Power Platform connector name (e.g., ServiceNow, Teams, HTTP)."
+          },
+          "auth": {
+            "type": "string",
+            "enum": ["connectionReference", "managedIdentity", "apiKey"],
+            "description": "Authentication method. Prefer connectionReference for ALM."
+          },
+          "inputs": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Connector-specific input parameters."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this action does."
+          },
+          "flowDefinition": {
+            "type": "string",
+            "description": "Path to a Power Automate flow definition JSON, if action uses a cloud flow."
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Actions the agent can invoke."
+    },
+    "channels": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["teams", "m365_copilot", "web", "custom"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Channels where the agent will be published."
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "dataLossPrevention": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["pii-block", "pii-mask", "profanity-filter", "custom"]
+          },
+          "description": "DLP policies to apply."
+        },
+        "allowExternal": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether external users can interact with the agent."
+        },
+        "authenticationMode": {
+          "type": "string",
+          "enum": ["entra_id", "none"],
+          "default": "entra_id",
+          "description": "User authentication mode."
+        },
+        "rbacRoles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Entra ID roles or groups allowed to use the agent."
+        }
+      },
+      "additionalProperties": false
+    },
+    "alm": {
+      "type": "object",
+      "properties": {
+        "managedOutsideDev": {
+          "type": "boolean",
+          "default": true,
+          "description": "Export as managed solution for non-dev environments."
+        },
+        "useEnvironmentVariables": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use environment variables for environment-specific settings."
+        },
+        "pipelines": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": ["github", "azure_devops"],
+              "description": "CI/CD provider."
+            },
+            "templates": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Pipeline template filenames to generate."
+            }
+          },
+          "additionalProperties": false
+        },
+        "solutionVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+\\.\\d+$",
+          "default": "1.0.0.0",
+          "description": "Initial solution version (Major.Minor.Build.Revision)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "enable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Application Insights telemetry."
+        },
+        "sampling": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.25,
+          "description": "Telemetry sampling rate (0.0-1.0)."
+        },
+        "appInsightsConnectionString": {
+          "type": "string",
+          "description": "Environment variable name that holds the App Insights connection string. Never embed the actual secret."
+        }
+      },
+      "additionalProperties": false
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Topic name."
+          },
+          "triggerPhrases": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Phrases that trigger this topic."
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Conversation topics for the agent."
+    }
+  },
+  "additionalProperties": false
+}

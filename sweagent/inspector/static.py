@@ -50,8 +50,8 @@ def _load_file(file_name, gold_patches, test_patches):
     try:
         role_map = {
             "user": "Computer",
-            "assistant": "SWE-Agent",
-            "subroutine": "SWE-Agent subroutine",
+            "assistant": "autobot",
+            "subroutine": "autobot subroutine",
             "default": "Default",
             "system": "System",
             "demo": "Demonstration",

@@ -5,12 +5,12 @@ from typing import Any, Literal
 from jinja2 import Template
 from pydantic import BaseModel
 
-from sweagent.agent.models import AbstractModel
-from sweagent.agent.problem_statement import ProblemStatement
-from sweagent.exceptions import FormatError
-from sweagent.tools.tools import ToolHandler
-from sweagent.types import Trajectory
-from sweagent.utils.log import get_logger
+from autobot.agent.models import AbstractModel
+from autobot.agent.problem_statement import ProblemStatement
+from autobot.exceptions import FormatError
+from autobot.tools.tools import ToolHandler
+from autobot.types import Trajectory
+from autobot.utils.log import get_logger
 
 
 class ActionSamplerOutput(BaseModel):
@@ -24,7 +24,7 @@ class AbstractActionSampler:
     def __init__(self, model: AbstractModel, tools: ToolHandler):
         self._model = model
         self._tools = tools
-        self._logger = get_logger("action_sampler", emoji="👥")
+        self._logger = get_logger("action_sampler")
 
     @abstractmethod
     def get_action(

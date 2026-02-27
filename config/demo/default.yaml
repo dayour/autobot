@@ -71,10 +71,10 @@ agent:
     name: claude-sonnet-4-20250514
 env:
   repo:
-    github_url: https://github.com/SWE-agent/test-repo
+    github_url: https://github.com/autobot/test-repo
   deployment:
     image: tiny
     python_standalone_dir: ""
 problem_statement:
   github_url:
-    https://github.com/SWE-agent/test-repo/issues/1
+    https://github.com/autobot/test-repo/issues/1

@@ -9,10 +9,10 @@ from urllib.parse import urlparse
 import requests
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
-from sweagent.utils.github import _get_problem_statement_from_github_issue, _parse_gh_issue_url
-from sweagent.utils.log import get_logger
+from autobot.utils.github import _get_problem_statement_from_github_issue, _parse_gh_issue_url
+from autobot.utils.log import get_logger
 
-logger = get_logger("swea-config", emoji="🔧")
+logger = get_logger("swea-config")
 
 # Constants for image processing
 VALID_IMAGE_MIME_TYPES = {
@@ -154,7 +154,7 @@ class GithubIssue(_BuiltinProblemStatementBase):
         return self.extra_fields
 
 
-class SWEBenchMultimodalProblemStatement(_BuiltinProblemStatementBase):
+class autobotbenchMultimodalProblemStatement(_BuiltinProblemStatementBase):
     text: str
 
     issue_images: list[str] = Field(default_factory=list)
@@ -170,7 +170,7 @@ class SWEBenchMultimodalProblemStatement(_BuiltinProblemStatementBase):
     This data will be available when formatting prompt templates.
     """
 
-    type: Literal["swe_bench_multimodal"] = "swe_bench_multimodal"
+    type: Literal["autobot_bench_multimodal"] = "autobot_bench_multimodal"
     """Discriminator for (de)serialization/CLI. Do not change."""
 
     id: str = None  # type: ignore
@@ -274,7 +274,7 @@ class SWEBenchMultimodalProblemStatement(_BuiltinProblemStatementBase):
 
     def __repr__(self) -> str:
         n_images = len(self.issue_images)
-        return f"SWEBenchMultimodalProblemStatement(id={self.id}, text={self.text[:30]}..., images={n_images})"
+        return f"autobotbenchMultimodalProblemStatement(id={self.id}, text={self.text[:30]}..., images={n_images})"
 
     def __str__(self) -> str:
         n_images = len(self.issue_images)
@@ -283,7 +283,7 @@ class SWEBenchMultimodalProblemStatement(_BuiltinProblemStatementBase):
 
 ProblemStatementConfig = (
     TextProblemStatement
-    | SWEBenchMultimodalProblemStatement
+    | autobotbenchMultimodalProblemStatement
     | GithubIssue
     | EmptyProblemStatement
     | FileProblemStatement
@@ -291,7 +291,7 @@ ProblemStatementConfig = (
 
 
 def problem_statement_from_simplified_input(
-    *, input: str, type: Literal["text", "text_file", "github_issue", "swe_bench_multimodal"]
+    *, input: str, type: Literal["text", "text_file", "github_issue", "autobot_bench_multimodal"]
 ) -> ProblemStatementConfig:
     """Get a problem statement from an `input` string and a `type`.
 
@@ -305,8 +305,8 @@ def problem_statement_from_simplified_input(
         return FileProblemStatement(path=Path(input))
     elif type == "github_issue":
         return GithubIssue(github_url=input)
-    elif type == "swe_bench_multimodal":
-        return SWEBenchMultimodalProblemStatement(text=input)
+    elif type == "autobot_bench_multimodal":
+        return autobotbenchMultimodalProblemStatement(text=input)
     else:
         msg = f"Unknown problem statement type: {type}"
         raise ValueError(msg)

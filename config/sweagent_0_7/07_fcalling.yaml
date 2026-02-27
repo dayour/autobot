@@ -1,5 +1,5 @@
 # This config shows the use of the function calling action parser together with the line-range based replace tools
-# This config is close to SWE-agent 0.7
+# This config is close to autobot 0.7
 agent:
   templates:
     system_template: |-

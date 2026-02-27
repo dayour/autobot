@@ -1,30 +1,30 @@
 # Project overview
 
-This section of the documentation talks about the architecture and research goals of [SWE-agent](#swe-agent).
+This section of the documentation talks about the architecture and research goals of [autobot](#autobot).
 
-## SWE-agent <a name="swe-agent"></a>
+## autobot <a name="autobot"></a>
 
-SWE-agent turns LMs (e.g. GPT-4) into software engineering agents that can fix issues in GitHub repositories.
+autobot turns LMs (e.g. GPT-4) into software engineering agents that can fix issues in GitHub repositories.
 
-On [SWE-bench](https://github.com/SWE-bench/SWE-bench), SWE-agent resolves **12.29%** of issues, achieving the state-of-the-art performance on the full test set.
+On [autobot-bench](https://github.com/autobot-bench/autobot-bench), autobot resolves **12.29%** of issues, achieving the state-of-the-art performance on the full test set.
 
-We accomplish our results by designing simple LM-centric commands and feedback formats to make it easier for the LM to browse the repository, view, edit and execute code files. We call this an 🤖 **Agent-Computer Interface (ACI)**.
+We accomplish our results by designing simple LM-centric commands and feedback formats to make it easier for the LM to browse the repository, view, edit and execute code files. We call this an **Agent-Computer Interface (ACI)**.
 Read more about the ACI [here](aci.md).
 
-SWE-agent is built and maintained by researchers from Princeton University.
+autobot is built and maintained by researchers from Princeton University.
 
 For a quick introduction, watch the following video:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/CeMtJ4XObAM?si=W2tyY9EpEe-v12EU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-A longer lecture touching on the project's motivation, research findings, as well as providing a hands-on tutorial on how to install, use, and configure SWE-agent is provided here:
+A longer lecture touching on the project's motivation, research findings, as well as providing a hands-on tutorial on how to install, use, and configure autobot is provided here:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/d9gcXpiiDao" title="NeurIPS Hacker Cup AI: SWEAgent" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/d9gcXpiiDao" title="NeurIPS Hacker Cup AI: autobot" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 For in-depth information, read our [paper](https://arxiv.org/abs/2405.15793). If you found this work helpful, please consider using the following citation:
 
 ```bibtex
-@inproceedings{yang2024sweagent,
+@inproceedings{yang2024autobot,
   title={{SWE}-agent: Agent-Computer Interfaces Enable Automated Software Engineering},
   author={John Yang and Carlos E Jimenez and Alexander Wettig and Kilian Lieret and Shunyu Yao and Karthik R Narasimhan and Ofir Press},
   booktitle={The Thirty-eighth Annual Conference on Neural Information Processing Systems},
@@ -33,18 +33,18 @@ For in-depth information, read our [paper](https://arxiv.org/abs/2405.15793). If
 }
 ```
 
-## SWE-agent <span class="enigma">EnIGMA</span> <a name="enigma"></a>
+## autobot <span class="enigma">EnIGMA</span> <a name="enigma"></a>
 
 !!! warning "Compatibility"
-    SWE-agent <span class="enigma">EnIGMA</span> is currently only available for SWE-agent v0.7.0.
+    autobot <span class="enigma">EnIGMA</span> is currently only available for autobot v0.7.0.
 
-SWE-agent <span class="enigma">EnIGMA</span> adds advanced **offensive cybersecurity capabilities**.
+autobot <span class="enigma">EnIGMA</span> adds advanced **offensive cybersecurity capabilities**.
 
 On the [NYU CTF benchmark](https://github.com/NYU-LLM-CTF/LLM_CTF_Database), EnIGMA solves **13.5%** of the capture the flag (CTF) challenges, achieving the state-of-the-art performance on the full test set of 200 challenges, **surpassing previous agents by more than 3x** ([leaderboard](https://enigma-agent.com#results)).
 
-We accomplish our results by extending the [🤖 ACIs](../background/aci.md) concept first introduced in SWE-agent, to the cybersecurity domain. We establish the novel [**:gear: Interactive Agent Tools** (IATs)](https://swe-agent.com/0.7/background/iat/) concept, which enables our agent to use interactive tools such as a debugger, in a multitasking way such that the agent still has access to the main shell while using the debugger.
+We accomplish our results by extending the [ACIs](../background/aci.md) concept first introduced in autobot, to the cybersecurity domain. We establish the novel [**Interactive Agent Tools** (IATs)](https://autobot.com/0.7/background/iat/) concept, which enables our agent to use interactive tools such as a debugger, in a multitasking way such that the agent still has access to the main shell while using the debugger.
 
-We also use a new **Summarizer** concept integrated into the agent to deal with long context. Read more about our different summarizers [here](https://swe-agent.com/0.7/config/summarizers/).
+We also use a new **Summarizer** concept integrated into the agent to deal with long context. Read more about our different summarizers [here](https://autobot.com/0.7/config/summarizers/).
 
 Specific [demonstrations](../config/demonstrations.md) were built per each CTF category (cryptography, reverse-engineering, forensics, ...), to enhance the model ability to solve new tasks from the same category.
 

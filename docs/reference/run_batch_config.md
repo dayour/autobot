@@ -1,1 +1,1 @@
-::: sweagent.run.run_batch.RunBatchConfig
+::: autobot.run.run_batch.RunBatchConfig

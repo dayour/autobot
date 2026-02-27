@@ -11,10 +11,10 @@ from swerex.deployment.abstract import AbstractDeployment
 from swerex.runtime.abstract import Command, UploadRequest
 from typing_extensions import Self
 
-from sweagent.utils.github import _parse_gh_repo_url
-from sweagent.utils.log import get_logger
+from autobot.utils.github import _parse_gh_repo_url
+from autobot.utils.log import get_logger
 
-logger = get_logger("swea-config", emoji="🔧")
+logger = get_logger("swea-config")
 
 
 class Repo(Protocol):
@@ -52,7 +52,7 @@ class PreExistingRepoConfig(BaseModel):
     """The commit to reset the repository to. The default is HEAD,
     i.e., the latest commit. You can also set this to a branch name (e.g., `dev`),
     a tag (e.g., `v0.1.0`), or a commit hash (e.g., `a4464baca1f`).
-    SWE-agent will then start from this commit when trying to solve the problem.
+    autobot will then start from this commit when trying to solve the problem.
     """
 
     type: Literal["preexisting"] = "preexisting"
@@ -80,7 +80,7 @@ class LocalRepoConfig(BaseModel):
     """The commit to reset the repository to. The default is HEAD,
     i.e., the latest commit. You can also set this to a branch name (e.g., `dev`),
     a tag (e.g., `v0.1.0`), or a commit hash (e.g., `a4464baca1f`).
-    SWE-agent will then start from this commit when trying to solve the problem.
+    autobot will then start from this commit when trying to solve the problem.
     """
 
     type: Literal["local"] = "local"
@@ -130,7 +130,7 @@ class GithubRepoConfig(BaseModel):
     """The commit to reset the repository to. The default is HEAD,
     i.e., the latest commit. You can also set this to a branch name (e.g., `dev`),
     a tag (e.g., `v0.1.0`), or a commit hash (e.g., `a4464baca1f`).
-    SWE-agent will then start from this commit when trying to solve the problem.
+    autobot will then start from this commit when trying to solve the problem.
     """
 
     clone_timeout: float = 500

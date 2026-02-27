@@ -18,12 +18,12 @@ from swerex.runtime.abstract import Command as RexCommand
 from swerex.runtime.abstract import UploadRequest
 from typing_extensions import Self
 
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.tools.bundle import Bundle
-from sweagent.tools.commands import BASH_COMMAND, Command
-from sweagent.tools.parsing import FunctionCallingParser, JsonParser, ParseFunction
-from sweagent.tools.utils import _guard_multiline_input, generate_command_docs
-from sweagent.utils.log import get_logger
+from autobot.environment.autobot_env import autobotenv
+from autobot.tools.bundle import Bundle
+from autobot.tools.commands import BASH_COMMAND, Command
+from autobot.tools.parsing import FunctionCallingParser, JsonParser, ParseFunction
+from autobot.tools.utils import _guard_multiline_input, generate_command_docs
+from autobot.utils.log import get_logger
 
 
 class ToolFilterConfig(BaseModel):
@@ -238,7 +238,7 @@ class ToolHandler:
         # partially initialized in `install_commands`.
         self._reset_commands = []
         self._command_patterns = self._get_command_patterns()
-        self.logger = get_logger("swea-tools", emoji="🧰")
+        self.logger = get_logger("swea-tools")
         # For testing: Return this state instead of querying the environment
         self.mock_state: dict[str, str] | None = None
 
@@ -249,21 +249,21 @@ class ToolHandler:
     # Installation & Reset
     # --------------------
 
-    def install(self, env: SWEEnv) -> None:
+    def install(self, env: autobotenv) -> None:
         self._install_commands(env)
         self.reset(env)
 
-    def reset(self, env: SWEEnv) -> None:
+    def reset(self, env: autobotenv) -> None:
         self.logger.info("Resetting tools")
         env_variables = self.config.env_variables.copy() | {
             var: os.getenv(var) for var in self.config.propagate_env_variables
         }
         env.set_env_variables(env_variables)
-        env.write_file("/root/.swe-agent-env", json.dumps(self.config.registry_variables))
+        env.write_file("/root/.autobot-env", json.dumps(self.config.registry_variables))
         env.write_file("/root/state.json", "{}")
         env.communicate(" && ".join(self._reset_commands), check="raise", timeout=self.config.install_timeout)
 
-    async def _upload_bundles(self, env: SWEEnv) -> None:
+    async def _upload_bundles(self, env: autobotenv) -> None:
         await asyncio.gather(
             *(
                 env.deployment.runtime.upload(
@@ -284,12 +284,12 @@ class ToolHandler:
             msg = f"Tool {command} is not available in the container."
             raise RuntimeError(msg) from None
 
-    async def _check_available_commands(self, env: SWEEnv, env_vars: dict[str, str]) -> None:
+    async def _check_available_commands(self, env: autobotenv, env_vars: dict[str, str]) -> None:
         await asyncio.gather(
             *(self._is_command_available(env, command.name, env_vars) for command in self.config.commands)
         )
 
-    def _install_commands(self, env: SWEEnv) -> None:
+    def _install_commands(self, env: autobotenv) -> None:
         """Make sure all commands are available in the container"""
         env.set_env_variables(self.config.env_variables)
         cwd = env.communicate("pwd", check="raise").strip()
@@ -314,7 +314,7 @@ class ToolHandler:
     # Getting state
     # -------------
 
-    def _get_state(self, env: SWEEnv) -> dict[str, str]:
+    def _get_state(self, env: autobotenv) -> dict[str, str]:
         """Retrieve the state from the environment"""
         try:
             state_str = env.read_file("/root/state.json")
@@ -334,7 +334,7 @@ class ToolHandler:
             raise ValueError(msg)
         return state
 
-    def get_state(self, env: SWEEnv) -> dict[str, str]:
+    def get_state(self, env: autobotenv) -> dict[str, str]:
         """Execute state commands from all bundles and combine their results.
         This can be used to extract environment variables etc. from the environment.
         """
@@ -371,7 +371,7 @@ class ToolHandler:
 
     def check_for_submission_cmd(self, output: str) -> bool:
         """Function for checking submission request."""
-        if r"<<SWE_AGENT_SUBMISSION>>" in output:
+        if r"<<autobot_SUBMISSION>>" in output:
             return True
         return False
 

@@ -1,6 +1,6 @@
 import pytest
 
-from sweagent.tools.commands import Argument, Command
+from autobot.tools.commands import Argument, Command
 
 
 def test_command_parsing_formats():

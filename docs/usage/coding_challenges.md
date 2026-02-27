@@ -1,11 +1,11 @@
-# Using SWE-agent for coding challenges
+# Using autobot for coding challenges
 
 !!! abstract "Overview"
-    It is easy to use SWE-agent to do more than just software engineering.
-    For example, you can tell SWE-agent to work on leetcode or humaneval-style problems.
+    It is easy to use autobot to do more than just software engineering.
+    For example, you can tell autobot to work on leetcode or humaneval-style problems.
 
     Required reading:
-    Please first skim [hello world](hello_world.md) and [command line basics](cl_tutorial.md) to get familiar with the basics of SWE-agent.
+    Please first skim [hello world](hello_world.md) and [command line basics](cl_tutorial.md) to get familiar with the basics of autobot.
 
 
 Let's start with a new problem statement. For this, put the problem you want to solve in a markdown file `problem.md`, for example:
@@ -21,8 +21,8 @@ This is the <a href="https://leetcode.com/problems/first-missing-positive/">firs
 
 </details>
 
-Second, we need to specify a repository wherein SWE-agent will work.
-Here, we can simply create an empty folder (outside of the SWE-agent repository), and add a `main.py` file
+Second, we need to specify a repository wherein autobot will work.
+Here, we can simply create an empty folder (outside of the autobot repository), and add a `main.py` file
 
 ```bash
 mkdir empty
@@ -43,7 +43,7 @@ class Solution:
 
 !!! tip
     If some imports (like `List`) are missing in the problem stub (like they oftentimes do
-    in leetcode) , SWE-agent will figure out how to add them. However, it might take an
+    in leetcode) , autobot will figure out how to add them. However, it might take an
     additional step, so it's best to directly specify them.
 
 Make sure to commit all changes to the repository:
@@ -52,10 +52,10 @@ Make sure to commit all changes to the repository:
 git add . && git commit -m "Add problem stub"
 ```
 
-Now, we can let SWE-agent solve the problem:
+Now, we can let autobot solve the problem:
 
 ```bash
-sweagent run \
+autobot run \
     --config config/coding_challenge.yaml \
     --problem_statement.path=problem.md \
     --env.repo.path=/path/to/empty \
@@ -73,19 +73,19 @@ sweagent run \
 
 </details>
 
-SWE-agent will typically conclude with a message like
+autobot will typically conclude with a message like
 
 ```
 INFO     Trajectory saved to trajectories/fuchur/azure-gpt4__problem__coding_challenge__t-0.00__p-0.95__c-3.00__install-1/26d111.traj
 INFO     Saved predictions to
          trajectories/fuchur/azure-gpt4__problem__coding_challenge__t-0.00__p-0.95__c-3.00__install-1/all_preds.jsonl
-╭──────────────────────────── 🎉 Submission successful 🎉 ────────────────────────────╮
-│ SWE-agent has produced a patch that it believes will solve the issue you submitted! │
+╭────────────────────────────  Submission successful  ────────────────────────────╮
+│ autobot has produced a patch that it believes will solve the issue you submitted! │
 │ Use the code snippet below to inspect or apply it!                                  │
 ╰─────────────────────────────────────────────────────────────────────────────────────╯
 
  # The patch has been saved to your local filesystem at:
- PATCH_FILE_PATH='/Users/fuchur/Documents/24/git_sync/SWE-agent/trajectories/fuchur/azure-gpt4__problem__coding_challenge__t-0.00__p-0
+ PATCH_FILE_PATH='/Users/fuchur/Documents/24/git_sync/autobot/trajectories/fuchur/azure-gpt4__problem__coding_challenge__t-0.00__p-0
  5__c-3.00__install-1/patches/26d111.patch'
  # Inspect it:
  cat "${PATCH_FILE_PATH}"
@@ -152,6 +152,6 @@ index 1e7f08f..beabaa7 100644
 Because of the `--apply_patch_locally` flag, the patch has also already been applied to the repository,
 so you can also retrieve the final solution from there.
 
-### Improving SWE-agent for coding challenges
+### Improving autobot for coding challenges
 
 By default, the demonstration trajectory the agent uses while solving a coding challenge is one in which it needs to solve a small bug in a short piece of code (from the HumanEvalFix dataset). Since that process is not too similar to solving a coding challenge, performance would probably substantially improve if the agent was given a demonstration trajectory in which it has to solve an actual programming challenge. To learn how to do that, read [this](../config/demonstrations.md).

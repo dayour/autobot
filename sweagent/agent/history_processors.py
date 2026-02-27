@@ -7,7 +7,7 @@ from typing import Annotated, Literal, Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from sweagent.types import History, HistoryItem
+from autobot.types import History, HistoryItem
 
 
 class AbstractHistoryProcessor(Protocol):
@@ -98,8 +98,8 @@ class LastNObservations(BaseModel):
           n: 5
     ```
 
-    as for example in use in the SWE-agent 0.7 config at
-    https://github.com/SWE-agent/SWE-agent/blob/main/config/sweagent_0_7/07.yaml
+    as for example in use in the autobot 0.7 config at
+    https://github.com/autobot/autobot/blob/main/config/autobot_0_7/07.yaml
 
     For most use cases, you only need to set `n`.
 

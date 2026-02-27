@@ -1,5 +1,5 @@
 """
-Run on a batch of instances/issues, e.g., SWE-bench.
+Run on a batch of instances/issues, e.g., autobot-bench.
 
 [cyan][bold]=== BASIC OPTIONS ===[/bold][/cyan]
 
@@ -8,10 +8,10 @@ Run on a batch of instances/issues, e.g., SWE-bench.
 
 [cyan][bold]=== EXAMPLES ===[/bold][/cyan]
 
-Basic usage: Run over a [bold][cyan]SWE-bench lite[/bold][/cyan][green]:
+Basic usage: Run over a [bold][cyan]autobot-bench lite[/bold][/cyan][green]:
 
-sweagent run-batch \\
-    --instances.type swe_bench \\ # configure instances
+autobot run-batch \\
+    --instances.type autobot_bench \\ # configure instances
     --instances.subset lite \\
     --instances.split dev  \\
     --instances.slice :50 \\     # first 50 instances
@@ -23,7 +23,7 @@ sweagent run-batch \\
 [cyan][bold]=== LOADING INSTANCES ===[/bold][/cyan]
 
 [cyan][bold]From a file[/bold][/cyan] [green]--instances.type file --instances.path /path/to/file[/green].
-[cyan][bold]From huggingface[/bold][/cyan] [green]--instances.type huggingface --instances.dataset_name=SWE_Bench_lite --instances.split=dev[/green].
+[cyan][bold]From huggingface[/bold][/cyan] [green]--instances.type huggingface --instances.dataset_name=autobot_bench_lite --instances.split=dev[/green].
 
 All instance specifications support the [green]filter[/green], [green]slice[/green], and [green]shuffle[/green] options.
 With [green]filter[/green], you can select specific instances, e.g., [green]--instances.filter='instance_id_1|instance_id_2'[/green].
@@ -47,22 +47,22 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from rich.live import Live
 from swerex.deployment.hooks.status import SetStatusDeploymentHook
 
-from sweagent import TRAJECTORY_DIR
-from sweagent.agent.agents import AgentConfig, get_agent_from_config
-from sweagent.agent.hooks.status import SetStatusAgentHook
-from sweagent.environment.hooks.status import SetStatusEnvironmentHook
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.exceptions import ModelConfigurationError, TotalCostLimitExceededError
-from sweagent.run._progress import RunBatchProgressManager
-from sweagent.run.batch_instances import BatchInstance, BatchInstanceSourceConfig, SWEBenchInstances
-from sweagent.run.common import BasicCLI, ConfigHelper, save_predictions
-from sweagent.run.hooks.abstract import CombinedRunHooks, RunHook
-from sweagent.run.hooks.apply_patch import SaveApplyPatchHook
-from sweagent.run.merge_predictions import merge_predictions
-from sweagent.run.run_single import RunSingleConfig
-from sweagent.types import AgentRunResult
-from sweagent.utils.config import load_environment_variables
-from sweagent.utils.log import (
+from autobot import TRAJECTORY_DIR
+from autobot.agent.agents import AgentConfig, get_agent_from_config
+from autobot.agent.hooks.status import SetStatusAgentHook
+from autobot.environment.hooks.status import SetStatusEnvironmentHook
+from autobot.environment.autobot_env import autobotenv
+from autobot.exceptions import ModelConfigurationError, TotalCostLimitExceededError
+from autobot.run._progress import RunBatchProgressManager
+from autobot.run.batch_instances import BatchInstance, BatchInstanceSourceConfig, autobotbenchInstances
+from autobot.run.common import BasicCLI, ConfigHelper, save_predictions
+from autobot.run.hooks.abstract import CombinedRunHooks, RunHook
+from autobot.run.hooks.apply_patch import SaveApplyPatchHook
+from autobot.run.merge_predictions import merge_predictions
+from autobot.run.run_single import RunSingleConfig
+from autobot.types import AgentRunResult
+from autobot.utils.config import load_environment_variables
+from autobot.utils.log import (
     add_file_handler,
     add_logger_names_to_stream_handlers,
     get_logger,
@@ -98,7 +98,7 @@ class RunBatchConfig(BaseSettings, cli_implicit_flags=False):
     """
 
     # pydantic config
-    model_config = SettingsConfigDict(extra="forbid", env_prefix="SWE_AGENT_")
+    model_config = SettingsConfigDict(extra="forbid", env_prefix="autobot_")
 
     def set_default_output_dir(self) -> None:
         # Needs to be called explicitly, because self._config_files will be setup
@@ -118,7 +118,7 @@ class RunBatchConfig(BaseSettings, cli_implicit_flags=False):
 
     @model_validator(mode="after")
     def evaluate_and_redo_existing(self) -> Self:
-        if not isinstance(self.instances, SWEBenchInstances):
+        if not isinstance(self.instances, autobotbenchInstances):
             return self
         if self.instances.evaluate and self.redo_existing:
             msg = (
@@ -164,7 +164,7 @@ class RunBatch:
             msg = "Cannot run with human model in parallel"
             raise ValueError(msg)
 
-        self.logger = get_logger("swea-run", emoji="🏃")
+        self.logger = get_logger("swea-run")
         add_file_handler(
             output_dir / "run_batch.log",
             id_="progress",
@@ -198,7 +198,7 @@ class RunBatch:
         config.set_default_output_dir()
         config.output_dir.mkdir(parents=True, exist_ok=True)
         (config.output_dir / "run_batch.config.yaml").write_text(yaml.dump(config.model_dump_json(), indent=2))
-        logger = get_logger("run", emoji="🏃")
+        logger = get_logger("run")
         logger.debug("Loading instances from %s", f"{config.instances!r}")
         instances = config.instances.get_instance_configs()
         logger.info("Loaded %d instances", len(instances))
@@ -220,11 +220,11 @@ class RunBatch:
             progress_bar=config.progress_bar,
             random_delay_multiplier=config.random_delay_multiplier,
         )
-        if isinstance(config.instances, SWEBenchInstances) and config.instances.evaluate:
-            from sweagent.run.hooks.swe_bench_evaluate import SweBenchEvaluate
+        if isinstance(config.instances, autobotbenchInstances) and config.instances.evaluate:
+            from autobot.run.hooks.autobot_bench_evaluate import autobotbenchEvaluate
 
             rb.add_hook(
-                SweBenchEvaluate(
+                autobotbenchEvaluate(
                     output_dir=config.output_dir,
                     subset=config.instances.subset,
                     split=config.instances.split,
@@ -314,11 +314,11 @@ class RunBatch:
         except (SystemExit, ModelConfigurationError, TotalCostLimitExceededError) as e:
             if self._raise_exceptions:
                 raise
-            self.logger.critical(f"❌ Exiting because {e.__class__.__name__} was called")
+            self.logger.critical(f"Exiting because {e.__class__.__name__} was called")
             raise _BreakLoop
         except Exception as e:
             self.logger.error(traceback.format_exc())
-            self.logger.error(f"❌ Failed on {instance.problem_statement.id}: {e}")
+            self.logger.error(f"Failed on {instance.problem_statement.id}: {e}")
             self._progress_manager.on_uncaught_exception(instance.problem_statement.id, e)
             if self._raise_exceptions:
                 raise
@@ -347,7 +347,7 @@ class RunBatch:
         agent.add_hook(SetStatusAgentHook(instance.problem_statement.id, self._progress_manager.update_instance_status))
         self._progress_manager.update_instance_status(instance.problem_statement.id, "Starting environment")
         instance.env.name = f"{instance.problem_statement.id}"
-        env = SWEEnv.from_config(instance.env)
+        env = autobotenv.from_config(instance.env)
         env.add_hook(
             SetStatusEnvironmentHook(instance.problem_statement.id, self._progress_manager.update_instance_status)
         )
@@ -405,7 +405,7 @@ class RunBatch:
             log_path.unlink()
             return False
         # otherwise, we will skip it
-        self.logger.info(f"⏭️ Skipping existing trajectory: {log_path}")
+        self.logger.info(f"Skipping existing trajectory: {log_path}")
         return exit_status
 
     def _add_instance_log_file_handlers(self, instance_id: str, multi_worker: bool = False) -> None:

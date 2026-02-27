@@ -1,7 +1,7 @@
 # Models and API keys
 
 !!! abstract "Setting up models"
-    This page shows how you can set up your LM with SWE-agent
+    This page shows how you can set up your LM with autobot
 
     * Generally all API models work out of the box by just adding the key and specifying `--agent.model.name`
     * More care must be taken for local models (see tips below!)
@@ -134,14 +134,14 @@ and set `agent.model.api_key` to the key you've configured for your proxy (or a 
     This might not be understood by all language models.
     Therefore, please remove this history processor if you do not need it
     (it's currently mostly used for anthropic cache control).
-    See [#957](https://github.com/SWE-agent/SWE-agent/issues/957) for more information.
+    See [#957](https://github.com/autobot/autobot/issues/957) for more information.
 
 ## Something went wrong?
 
 * If you get `Error code: 404`, please check your configured keys, in particular
   whether you set `OPENAI_API_BASE_URL` correctly (if you're not using it, the
   line should be deleted or commented out).
-  Also see [this issue](https://github.com/SWE-agent/SWE-agent/issues/467)
+  Also see [this issue](https://github.com/autobot/autobot/issues/467)
   for reference.
 
 

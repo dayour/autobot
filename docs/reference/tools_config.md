@@ -1,14 +1,14 @@
 # Tool configuration
 
-This shows how to configure tools for SWE-agent.
+This shows how to configure tools for autobot.
 
 !!! note "Tool configuration"
 
-    This is the page for configuring tools for SWE-agent, not for setting up the tools that are being used for the agent.
+    This is the page for configuring tools for autobot, not for setting up the tools that are being used for the agent.
     For the latter, see [tool bundles](./bundle_config.md).
 
-::: sweagent.tools.tools.ToolConfig
+::: autobot.tools.tools.ToolConfig
 
-::: sweagent.tools.tools.ToolFilterConfig
+::: autobot.tools.tools.ToolFilterConfig
 
-::: sweagent.tools.bundle.Bundle
+::: autobot.tools.bundle.Bundle

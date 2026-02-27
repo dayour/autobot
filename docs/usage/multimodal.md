@@ -1,19 +1,19 @@
 # Multimodal Support
 
-SWE-agent supports multimodal AI models that can process both text and images. This enables the agent to work with visual context from GitHub issues, such as screenshots, diagrams, and UI mockups.
+autobot supports multimodal AI models that can process both text and images. This enables the agent to work with visual context from GitHub issues, such as screenshots, diagrams, and UI mockups.
 
 ## Overview
 
 The multimodal implementation automatically:
 
-- **Detects multimodal instances** from SWE-bench Multimodal datasets
+- **Detects multimodal instances** from autobot-bench Multimodal datasets
 - **Downloads images** from GitHub issue URLs
 - **Converts to base64 markdown** format for AI model consumption
 - **Handles errors gracefully** with fallback to text-only processing
 
 ## Supported Image Categories
 
-Currently, SWE-agent processes images from the `problem_statement` category, which includes:
+Currently, autobot processes images from the `problem_statement` category, which includes:
 
 - Screenshots showing bugs or issues
 - UI mockups and design specifications
@@ -30,9 +30,9 @@ Currently, SWE-agent processes images from the `problem_statement` category, whi
 Use the pre-configured multimodal setup:
 
 ```bash
-sweagent run-batch \
+autobot run-batch \
     --config config/default_mm_with_images.yaml \
-    --instances.type swe_bench \
+    --instances.type autobot_bench \
     --instances.subset multimodal \
     --instances.split dev
 ```
@@ -51,9 +51,9 @@ agent:
 Or for specific instances:
 
 ```python
-from sweagent.agent.problem_statement import SWEBenchMultimodalProblemStatement
+from autobot.agent.problem_statement import autobotbenchMultimodalProblemStatement
 
-problem_statement = SWEBenchMultimodalProblemStatement(
+problem_statement = autobotbenchMultimodalProblemStatement(
     text="Fix the rendering issue",
     issue_images=["https://example.com/screenshot.png"],
     disable_image_processing=True  # Skip image processing
@@ -88,7 +88,7 @@ model:
 
 ### Automatic Detection
 
-When loading SWE-bench instances, multimodal support is automatic:
+When loading autobot-bench instances, multimodal support is automatic:
 
 ```json
 {
@@ -103,9 +103,9 @@ When loading SWE-bench instances, multimodal support is automatic:
 ### Direct Usage
 
 ```python
-from sweagent.agent.problem_statement import SWEBenchMultimodalProblemStatement
+from autobot.agent.problem_statement import autobotbenchMultimodalProblemStatement
 
-problem_statement = SWEBenchMultimodalProblemStatement(
+problem_statement = autobotbenchMultimodalProblemStatement(
     text="Fix the rendering issue shown in the screenshots",
     issue_images=[
         "https://example.com/before.png",
@@ -152,6 +152,6 @@ The `web_browser` bundle provides tools for:
 
 ### Templates Configuration
 
-We've enabled multimodal processing when `--instances.type=swe-bench --instances.subset=multimodal` are set.
+We've enabled multimodal processing when `--instances.type=autobot-bench --instances.subset=multimodal` are set.
 
 To disable this behavior, you must set `--templates.disable_image_processing=true`.

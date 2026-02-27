@@ -19,7 +19,7 @@ from rich.progress import (
 )
 from rich.table import Table
 
-from sweagent.agent.models import GLOBAL_STATS
+from autobot.agent.models import GLOBAL_STATS
 
 
 def _shorten_str(s: str, max_len: int, shorten_left=False) -> str:

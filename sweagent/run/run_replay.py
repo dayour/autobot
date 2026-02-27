@@ -6,7 +6,7 @@ We will take all actions in the trajectory and execute them in an environment.
 
 This has two main use cases:
 
-1. Create a demo from a yaml file containing actions (can also be created from a trajectory file with [green]sweagent run traj-to-demo[/green]).
+1. Create a demo from a yaml file containing actions (can also be created from a trajectory file with [green]autobot run traj-to-demo[/green]).
    [green]run-replay[/green] will execute the actions to get the environment output and produce a full trajectory to be used as a demo.
 2. Debugging and testing of tools and environment behavior.
 
@@ -14,11 +14,11 @@ This has two main use cases:
 
 Replay a trajectory file:
 
-[green]sweagent run replay --traj_path mytraj.traj[/green]
+[green]autobot run replay --traj_path mytraj.traj[/green]
 
 Replay a demo file:
 
-[green]sweagent run replay --traj_path mydemo.demo.yaml[/green]
+[green]autobot run replay --traj_path mydemo.demo.yaml[/green]
 """
 
 import json
@@ -34,13 +34,13 @@ from swerex.deployment.abstract import AbstractDeployment
 from swerex.deployment.config import DeploymentConfig, get_deployment
 from typing_extensions import Self
 
-from sweagent.agent.agents import DefaultAgent
-from sweagent.agent.models import ReplayModelConfig
-from sweagent.environment.swe_env import SWEEnv
-from sweagent.run.common import BasicCLI, ConfigHelper
-from sweagent.run.run_single import RunSingle, RunSingleConfig
-from sweagent.utils.config import load_environment_variables
-from sweagent.utils.log import get_logger
+from autobot.agent.agents import DefaultAgent
+from autobot.agent.models import ReplayModelConfig
+from autobot.environment.autobot_env import autobotenv
+from autobot.run.common import BasicCLI, ConfigHelper
+from autobot.run.run_single import RunSingle, RunSingleConfig
+from autobot.utils.config import load_environment_variables
+from autobot.utils.log import get_logger
 
 
 class RunReplayConfig(BaseSettings, cli_implicit_flags=False):
@@ -54,7 +54,7 @@ class RunReplayConfig(BaseSettings, cli_implicit_flags=False):
     """Additional config files to merge with the replay config."""
 
     # pydantic config
-    model_config = SettingsConfigDict(extra="forbid", env_prefix="SWE_AGENT_")
+    model_config = SettingsConfigDict(extra="forbid", env_prefix="autobot_")
 
     def model_post_init(self, __context: Any) -> None:
         if self.output_dir == Path("DEFAULT"):
@@ -77,7 +77,7 @@ class RunReplay:
         self.traj_path = traj_path
         self.output_dir = output_dir
         self._replay_action_trajs_path = Path(tempfile.NamedTemporaryFile(suffix=".json").name)
-        self.logger = get_logger("swea-run", emoji="🏃")
+        self.logger = get_logger("swea-run")
         self._catch_errors = _catch_errors
         self._require_zero_exit_code = _require_zero_exit_code
         self._update_config = update_config if update_config is not None else []
@@ -170,8 +170,8 @@ class RunReplay:
             raise ValueError(msg)
         self._replay_action_trajs_path.write_text(json.dumps({self.instance_id: actions}))
 
-    def _get_env(self) -> SWEEnv:
-        return SWEEnv(
+    def _get_env(self) -> autobotenv:
+        return autobotenv(
             deployment=self.deployment,
             repo=self.config.env.repo,
             post_startup_commands=[],

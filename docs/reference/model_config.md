@@ -10,11 +10,11 @@ In most cases, you will want to use the `GenericAPIModelConfig` object.
 
 ## API LMs
 
-::: sweagent.agent.models.GenericAPIModelConfig
+::: autobot.agent.models.GenericAPIModelConfig
     options:
         heading_level: 3
 
-::: sweagent.agent.models.RetryConfig
+::: autobot.agent.models.RetryConfig
     options:
         heading_level: 3
 
@@ -23,16 +23,16 @@ In most cases, you will want to use the `GenericAPIModelConfig` object.
 The following two models allow you to test your environment by prompting you for actions.
 This can also be very useful to create your first [demonstrations](../config/demonstrations.md).
 
-::: sweagent.agent.models.HumanModel
+::: autobot.agent.models.HumanModel
     options:
         heading_level: 3
 
-::: sweagent.agent.models.HumanThoughtModel
+::: autobot.agent.models.HumanThoughtModel
     options:
         heading_level: 3
 
 ## Replay model for testing and demonstrations
 
-::: sweagent.agent.models.ReplayModel
+::: autobot.agent.models.ReplayModel
     options:
         heading_level: 3

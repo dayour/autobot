@@ -22,7 +22,7 @@ See the [local models section](../installation/keys.md#custom-model-registry-for
 
 ### Anthropic Claude
 
-Prompt caching makes SWE-agent several times more affordable. While this is done automatically for models like `gpt-4o`,
+Prompt caching makes autobot several times more affordable. While this is done automatically for models like `gpt-4o`,
 care has to be taken for Anthropic Claude, as you need to manually set the cache break points.
 
 For this, include the following history processor:
@@ -39,11 +39,11 @@ agent:
     Other history processors might interfere with the prompt caching
     if you are not careful.
     However, if your history processor is only modifying the last observation,
-    you can combine as done [here](https://github.com/SWE-agent/SWE-agent/blob/main/config/sweagent_heavy.yaml).
+    you can combine as done [here](https://github.com/autobot/autobot/blob/main/config/autobot_heavy.yaml).
 
 Anthropic Claude gives you 4 cache break points per key.
 You need two of them for a single agent run (because the break points are both used to retrieve and set the cache).
-Therefore, you can only run two parallel instances of SWE-agent with [`run-batch`](../usage/batch_mode.md) per key.
+Therefore, you can only run two parallel instances of autobot with [`run-batch`](../usage/batch_mode.md) per key.
 To support more parallel running instances, supply multiple keys as described below.
 
 We recommend that you check how often you hit the cache. A very simple way is to go to your trajectory directory and grep like so:
@@ -53,9 +53,9 @@ grep -o "cached_tokens=[0-9]*" django__django-11299.debug.log
 ```
 
 Note that the maximum number of output tokens of Claude 3.7/4 can be extended with extra headers.
-See [this issue in litellm](https://github.com/BerriAI/litellm/issues/8984) and and [swe-agent PR #1035](https://github.com/SWE-agent/SWE-agent/issues/1035)
+See [this issue in litellm](https://github.com/BerriAI/litellm/issues/8984) and and [autobot PR #1035](https://github.com/autobot/autobot/issues/1035)
 for omore information.
-Since [#1036](https://github.com/SWE-agent/SWE-agent/pull/1036) you can also manually set the maximum output tokens and override the information
+Since [#1036](https://github.com/autobot/autobot/pull/1036) you can also manually set the maximum output tokens and override the information
 from `litellm`.
 
 To use extended thinking, you can set the following in your config:
@@ -134,7 +134,7 @@ If you need to modify the tokenizer that is used when calculating costs, you can
 
 ## Models for testing
 
-We also provide models for testing SWE-agent without spending any credits
+We also provide models for testing autobot without spending any credits
 
 * `HumanModel` and `HumanThoughtModel` will prompt for input from the user that stands in for the output of the LM. This can be used to create new [demonstrations](../config/demonstrations.md#manual).
 * `ReplayModel` takes a trajectory as input and "replays it"

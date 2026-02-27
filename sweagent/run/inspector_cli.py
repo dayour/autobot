@@ -16,8 +16,8 @@ from textual.containers import Container, Vertical, VerticalScroll
 from textual.screen import ModalScreen
 from textual.widgets import Footer, Header, Input, ListItem, ListView, Static
 
-from sweagent.utils.files import load_file
-from sweagent.utils.serialization import _yaml_serialization_with_linebreaks
+from autobot.utils.files import load_file
+from autobot.utils.serialization import _yaml_serialization_with_linebreaks
 
 
 def _move_items_top(d: dict, keys: list[str]) -> dict:
@@ -389,11 +389,11 @@ class TrajectoryInspectorApp(App):
         for traj in self.available_traj_paths:
             instance_id = traj.stem
             if results is None:
-                result = "❓"
+                result = "?"
             elif instance_id in results["resolved_ids"]:
-                result = "✅"
+                result = "PASS"
             else:
-                result = "❌"
+                result = "FAIL"
             self.overview_stats[instance_id]["result"] = result
 
         def _get_info(traj: Path) -> tuple[str, dict]:

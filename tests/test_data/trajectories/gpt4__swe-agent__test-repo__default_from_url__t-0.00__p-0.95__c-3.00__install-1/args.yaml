@@ -506,8 +506,8 @@ agent:
 environment:
   base_commit: null
   container_name: null
-  data_path: https://github.com/klieret/swe-agent-test-repo/issues/1
-  image_name: sweagent/swe-agent:latest
+  data_path: https://github.com/klieret/autobot-test-repo/issues/1
+  image_name: autobot/autobot:latest
   install_environment: true
   no_mirror: false
   split: dev

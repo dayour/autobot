@@ -6,7 +6,7 @@ We currently support the following repository types:
 * A local repository (`LocalRepoConfig`)
 * A GitHub repository (`GithubRepoConfig`)
 
-With `sweagent run`, you can specify the repository type with the `--env.repo` flag.
+With `autobot run`, you can specify the repository type with the `--env.repo` flag.
 For example:
 
 ```bash title="From a pre-existing repository"
@@ -21,24 +21,24 @@ For example:
 --env.repo.type=local
 ```
 
-All of these classes are defined in `sweagent.environment.repo`.
+All of these classes are defined in `autobot.environment.repo`.
 
-::: sweagent.environment.repo.PreExistingRepoConfig
+::: autobot.environment.repo.PreExistingRepoConfig
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.environment.repo.LocalRepoConfig
+::: autobot.environment.repo.LocalRepoConfig
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.environment.repo.GithubRepoConfig
+::: autobot.environment.repo.GithubRepoConfig
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.environment.repo.repo_from_simplified_input
+::: autobot.environment.repo.repo_from_simplified_input
     options:
         show_root_full_path: false
         show_bases: false

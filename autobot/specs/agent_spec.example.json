@@ -1,0 +1,107 @@
+{
+  "name": "Contoso IT Helpdesk Agent",
+  "description": "An enterprise IT helpdesk agent that answers policy questions, creates support tickets, and escalates complex issues to human agents.",
+  "publisher": {
+    "displayName": "Contoso IT",
+    "prefix": "contit",
+    "email": "it-platform@contoso.com"
+  },
+  "environments": {
+    "source": "dev",
+    "targets": ["test", "prod"]
+  },
+  "knowledgeSources": [
+    {
+      "type": "sharepoint",
+      "url": "https://contoso.sharepoint.com/sites/ITPolicies",
+      "scope": "site",
+      "description": "IT policies and procedures wiki"
+    },
+    {
+      "type": "sharepoint",
+      "url": "https://contoso.sharepoint.com/sites/ITPolicies/Shared Documents/FAQ",
+      "scope": "folder",
+      "description": "Frequently asked questions library"
+    },
+    {
+      "type": "web",
+      "url": "https://docs.contoso.com/it-support",
+      "depth": 2,
+      "description": "Public IT support documentation"
+    },
+    {
+      "type": "file",
+      "path": "./knowledge/*.pdf",
+      "description": "Onboarding and device setup guides"
+    }
+  ],
+  "actions": [
+    {
+      "name": "CreateTicket",
+      "connector": "ServiceNow",
+      "auth": "connectionReference",
+      "inputs": {
+        "table": "incident",
+        "fields": {
+          "short_description": "{{summary}}",
+          "urgency": "{{urgency}}",
+          "category": "IT Support"
+        }
+      },
+      "description": "Create a new incident ticket in ServiceNow"
+    },
+    {
+      "name": "PostToTeams",
+      "connector": "Teams",
+      "auth": "connectionReference",
+      "description": "Post an escalation message to the IT Support Teams channel"
+    },
+    {
+      "name": "LookupUser",
+      "connector": "Office365Users",
+      "auth": "connectionReference",
+      "inputs": {
+        "searchTerm": "{{userEmail}}"
+      },
+      "description": "Look up user profile from Entra ID"
+    }
+  ],
+  "channels": ["teams", "m365_copilot"],
+  "security": {
+    "dataLossPrevention": ["pii-block"],
+    "allowExternal": false,
+    "authenticationMode": "entra_id",
+    "rbacRoles": ["IT-Helpdesk-Users", "All-Employees"]
+  },
+  "alm": {
+    "managedOutsideDev": true,
+    "useEnvironmentVariables": true,
+    "solutionVersion": "1.0.0.0",
+    "pipelines": {
+      "provider": "github",
+      "templates": ["build.yml", "release.yml"]
+    }
+  },
+  "telemetry": {
+    "enable": true,
+    "sampling": 0.25,
+    "appInsightsConnectionString": "CONTOSO_APPINSIGHTS_CS"
+  },
+  "topics": [
+    {
+      "name": "PasswordReset",
+      "triggerPhrases": ["reset my password", "forgot password", "can't log in", "locked out"],
+      "description": "Guide users through the self-service password reset process"
+    },
+    {
+      "name": "DeviceSetup",
+      "triggerPhrases": ["new laptop", "setup device", "configure VPN", "install software"],
+      "description": "Help with new device setup and software installation"
+    },
+    {
+      "name": "EscalateToHuman",
+      "triggerPhrases": ["talk to a person", "need human help", "escalate"],
+      "description": "Escalate the conversation to a live IT support agent"
+    }
+  ]
+}

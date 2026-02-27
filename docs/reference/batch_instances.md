@@ -1,4 +1,4 @@
-::: sweagent.run.batch_instances
+::: autobot.run.batch_instances
     options:
         members_order: source
         show_root_heading: false

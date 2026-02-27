@@ -15,10 +15,10 @@ from pydantic_settings import BaseSettings, CliApp, SettingsError
 from rich import print as rich_print
 from rich.panel import Panel
 
-from sweagent import CONFIG_DIR
-from sweagent.types import AgentInfo, AgentRunResult
-from sweagent.utils.log import get_logger
-from sweagent.utils.serialization import merge_nested_dicts
+from autobot import CONFIG_DIR
+from autobot.types import AgentInfo, AgentRunResult
+from autobot.utils.log import get_logger
+from autobot.utils.serialization import merge_nested_dicts
 
 
 def _shorten_strings(data, *, max_length=30):
@@ -57,12 +57,12 @@ The first line of each block is the attribute that failed validation, the follow
 If you see many lines of errors, there are probably different ways to instantiate the same object (a union type).
 For example, there are different deployments with different options each. Pydantic is then trying
 one after the other and reporting the failures for each of them.
-More on union types: [link=https://swe-agent.com/latest/usage/cl_tutorial/#union-types]https://swe-agent.com/latest/usage/cl_tutorial/#union-types[/link]
+More on union types: [link=https://autobot.com/latest/usage/cl_tutorial/#union-types]https://autobot.com/latest/usage/cl_tutorial/#union-types[/link]
 """
 
 _SETTING_ERROR_HINTS = """
 [red][bold]Hints:[/bold][/red]
-Run `sweagent <subcommand> --help` for usage examples.
+Run `autobot <subcommand> --help` for usage examples.
 
 [red][bold]Common mistakes:[/bold][/red]
 - You used dashes instead of underscores (wrong: `--num-workers`, correct: `--num_workers`).
@@ -193,7 +193,7 @@ class BasicCLI:
         help_text: str | None = None,
         default_config_file: Path = CONFIG_DIR / "default.yaml",
     ):
-        """This class implements a basic CLI for SWE-agent. It is based on pydantic-settings, i.e., takes
+        """This class implements a basic CLI for autobot. It is based on pydantic-settings, i.e., takes
         a `BaseSettings` object. In principle you could just initialize these via `pydantic-settings`'s `CliApp.run`,
         however, we also want to add a `--config` option to load additional config files and some other things.
         We also try to improve a bit on the pydantic error messages in here.
@@ -206,7 +206,7 @@ class BasicCLI:
         """
         self.arg_type = config_type
         self.default_settings = default_settings
-        self.logger = get_logger("swea-cli", emoji="🔧")
+        self.logger = get_logger("swea-cli")
         self.help_text = help_text
         self.default_config_file = default_config_file
 
@@ -368,7 +368,7 @@ class BasicCLI:
 
 
 def save_predictions(traj_dir: Path, instance_id: str, result: AgentRunResult):
-    """Save predictions in a file readable by SWE-bench"""
+    """Save predictions in a file readable by autobot-bench"""
     output_file = traj_dir / instance_id / (instance_id + ".pred")
     output_file.parent.mkdir(parents=True, exist_ok=True)
     datum = {

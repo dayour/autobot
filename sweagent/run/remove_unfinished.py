@@ -4,8 +4,8 @@ import argparse
 import shutil
 from pathlib import Path
 
-from sweagent.utils.files import load_file
-from sweagent.utils.log import get_logger
+from autobot.utils.files import load_file
+from autobot.utils.log import get_logger
 
 logger = get_logger("remove_unfinished")
 

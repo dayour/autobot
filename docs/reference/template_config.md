@@ -1,3 +1,3 @@
 # Template configuration
 
-::: sweagent.agent.agents.TemplateConfig
+::: autobot.agent.agents.TemplateConfig

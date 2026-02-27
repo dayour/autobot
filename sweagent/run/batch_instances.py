@@ -14,17 +14,17 @@ from swerex.deployment.config import (
 )
 from typing_extensions import Self
 
-from sweagent.agent.problem_statement import (
+from autobot.agent.problem_statement import (
     ProblemStatementConfig,
-    SWEBenchMultimodalProblemStatement,
+    autobotbenchMultimodalProblemStatement,
     TextProblemStatement,
 )
-from sweagent.environment.repo import GithubRepoConfig, LocalRepoConfig, PreExistingRepoConfig
-from sweagent.environment.swe_env import EnvironmentConfig
-from sweagent.utils.files import load_file
-from sweagent.utils.log import get_logger
+from autobot.environment.repo import GithubRepoConfig, LocalRepoConfig, PreExistingRepoConfig
+from autobot.environment.autobot_env import EnvironmentConfig
+from autobot.utils.files import load_file
+from autobot.utils.log import get_logger
 
-logger = get_logger("swea-config", emoji="🔧")
+logger = get_logger("swea-config")
 
 
 class AbstractInstanceSource(ABC):
@@ -115,7 +115,7 @@ class SimpleBatchInstance(BaseModel):
         deployment = deployment.model_copy(deep=True)
 
         if "issue_images" in self.extra_fields:
-            problem_statement = SWEBenchMultimodalProblemStatement(
+            problem_statement = autobotbenchMultimodalProblemStatement(
                 text=self.problem_statement,
                 issue_images=self.extra_fields.pop("issue_images"),
                 id=self.instance_id,
@@ -159,7 +159,7 @@ class SimpleBatchInstance(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def handle_legacy_id(cls, data):
-        # Handling compatibility with swe-agent <= 1.0.1
+        # Handling compatibility with autobot <= 1.0.1
         if isinstance(data, dict):
             if "id" in data and "instance_id" not in data:
                 data["instance_id"] = data["id"]
@@ -168,14 +168,14 @@ class SimpleBatchInstance(BaseModel):
 
     # todo: Maybe populate extra fields?
     @classmethod
-    def from_swe_bench(cls, instance: dict[str, Any]) -> Self:
-        """Convert instances from the classical SWE-bench dataset to the `SimpleBatchInstance` format."""
+    def from_autobot_bench(cls, instance: dict[str, Any]) -> Self:
+        """Convert instances from the classical autobot-bench dataset to the `SimpleBatchInstance` format."""
         iid = instance["instance_id"]
         image_name = instance.get("image_name", None)
         if image_name is None:
             # Docker doesn't allow double underscore, so we replace them with a magic token
             id_docker_compatible = iid.replace("__", "_1776_")
-            image_name = f"docker.io/swebench/sweb.eval.x86_64.{id_docker_compatible}:latest".lower()
+            image_name = f"docker.io/autobotbench/sweb.eval.x86_64.{id_docker_compatible}:latest".lower()
         extra_fields = {}
         if "image_assets" in instance:
             issue_images = json.loads(instance["image_assets"])["problem_statement"]
@@ -265,11 +265,11 @@ class InstancesFromHuggingFace(BaseModel, AbstractInstanceSource):
         return f"{ds_name}_{self.split}"
 
 
-class SWEBenchInstances(BaseModel, AbstractInstanceSource):
-    """Load instances from SWE-bench."""
+class autobotbenchInstances(BaseModel, AbstractInstanceSource):
+    """Load instances from autobot-bench."""
 
     subset: Literal["lite", "verified", "full", "multimodal", "multilingual"] = "lite"
-    """Subset of swe-bench to use"""
+    """Subset of autobot-bench to use"""
 
     # IMPORTANT: Do not call this `path`, because then if people do not specify instance.type,
     # it might be resolved to ExpertInstancesFromFile or something like that.
@@ -286,7 +286,7 @@ class SWEBenchInstances(BaseModel, AbstractInstanceSource):
     """Deployment configuration. Note that the image_name option is overwritten by the images specified in the task instances.
     """
 
-    type: Literal["swe_bench"] = "swe_bench"
+    type: Literal["autobot_bench"] = "autobot_bench"
     """Discriminator for (de)serialization/CLI. Do not change."""
 
     filter: str = ".*"
@@ -306,11 +306,11 @@ class SWEBenchInstances(BaseModel, AbstractInstanceSource):
         if self.path_override is not None:
             return str(self.path_override)
         dataset_mapping = {
-            "full": "princeton-nlp/SWE-Bench",
-            "verified": "princeton-nlp/SWE-Bench_Verified",
-            "lite": "princeton-nlp/SWE-Bench_Lite",
-            "multimodal": "princeton-nlp/SWE-Bench_Multimodal",
-            "multilingual": "swe-bench/SWE-Bench_Multilingual",
+            "full": "princeton-nlp/autobot-bench",
+            "verified": "princeton-nlp/autobot-bench_Verified",
+            "lite": "princeton-nlp/autobot-bench_Lite",
+            "multimodal": "princeton-nlp/autobot-bench_Multimodal",
+            "multilingual": "autobot-bench/autobot-bench_Multilingual",
         }
 
         if self.subset not in dataset_mapping:
@@ -328,13 +328,13 @@ class SWEBenchInstances(BaseModel, AbstractInstanceSource):
             self.deployment.platform = "linux/amd64"
 
         instances = [
-            SimpleBatchInstance.from_swe_bench(instance).to_full_batch_instance(self.deployment) for instance in ds
+            SimpleBatchInstance.from_autobot_bench(instance).to_full_batch_instance(self.deployment) for instance in ds
         ]
         return _filter_batch_items(instances, filter_=self.filter, slice_=self.slice, shuffle=self.shuffle)
 
     @property
     def id(self) -> str:
-        return f"swe_bench_{self.subset}_{self.split}"
+        return f"autobot_bench_{self.subset}_{self.split}"
 
 
 class ExpertInstancesFromFile(BaseModel, AbstractInstanceSource):
@@ -415,5 +415,5 @@ class SWESmithInstances(BaseModel, AbstractInstanceSource):
 
 
 BatchInstanceSourceConfig = (
-    InstancesFromHuggingFace | InstancesFromFile | SWEBenchInstances | ExpertInstancesFromFile | SWESmithInstances
+    InstancesFromHuggingFace | InstancesFromFile | autobotbenchInstances | ExpertInstancesFromFile | SWESmithInstances
 )

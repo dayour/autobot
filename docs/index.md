@@ -9,21 +9,21 @@ title: "Getting Started"
 </style>
 
 <div style="text-align: center;">
-    <img class="light-mode-only" src="assets/readme_assets/swe-agent-banner-light.svg" alt="SWE-agent banner" style="height: 10em;">
-    <img class="dark-mode-only" src="assets/readme_assets/swe-agent-banner-dark.svg" alt="SWE-agent banner" style="height: 10em;">
+    <img class="light-mode-only" src="assets/readme_assets/autobot-banner-light.svg" alt="autobot banner" style="height: 10em;">
+    <img class="dark-mode-only" src="assets/readme_assets/autobot-banner-dark.svg" alt="autobot banner" style="height: 10em;">
 </div>
 
-SWE-agent enables your language model of choice (e.g. GPT-4o or Claude Sonnet 4) to autonomously use tools to
-[fix issues in real GitHub repositories](https://swe-agent.com/latest/usage/hello_world),
+autobot enables your language model of choice (e.g. GPT-4o or Claude Sonnet 4) to autonomously use tools to
+[fix issues in real GitHub repositories](https://autobot.com/latest/usage/hello_world),
 [find cybersecurity vulnerabilities](https://enigma-agent.com/), or
-[perform any custom task](https://swe-agent.com/latest/usage/coding_challenges).
+[perform any custom task](https://autobot.com/latest/usage/coding_challenges).
 
-* ✅ **State of the art** on SWE-bench among open-source projects
-* ✅ **Free-flowing & generalizable**: Leaves maximal agency to the LM
-* ✅ **Configurable & fully documented**: Governed by a single `yaml` file
-* ✅ **Made for research**: Simple & hackable by design
+*  **State of the art** on autobot-bench among open-source projects
+*  **Free-flowing & generalizable**: Leaves maximal agency to the LM
+*  **Configurable & fully documented**: Governed by a single `yaml` file
+*  **Made for research**: Simple & hackable by design
 
-SWE-agent is built and maintained by researchers from Princeton University and Stanford University.
+autobot is built and maintained by researchers from Princeton University and Stanford University.
 
 <div class="grid cards">
   <a href="installation/" class="nav-card-link">
@@ -32,7 +32,7 @@ SWE-agent is built and maintained by researchers from Princeton University and S
         <span class="material-icons nav-card-icon">download</span>
         <span class="nav-card-title">Installation</span>
       </div>
-      <p class="nav-card-description">Installing SWE-agent.</p>
+      <p class="nav-card-description">Installing autobot.</p>
     </div>
   </a>
 
@@ -42,7 +42,7 @@ SWE-agent is built and maintained by researchers from Princeton University and S
         <span class="material-icons nav-card-icon">settings</span>
         <span class="nav-card-title">Hello world</span>
       </div>
-      <p class="nav-card-description">Solve a GitHub issue with SWE-agent.</p>
+      <p class="nav-card-description">Solve a GitHub issue with autobot.</p>
     </div>
   </a>
 
@@ -52,7 +52,7 @@ SWE-agent is built and maintained by researchers from Princeton University and S
         <span class="material-icons nav-card-icon">lightbulb</span>
         <span class="nav-card-title">User guides</span>
       </div>
-      <p class="nav-card-description">Dive deeper into SWE-agent's features and goals.</p>
+      <p class="nav-card-description">Dive deeper into autobot's features and goals.</p>
     </div>
   </a>
 
@@ -66,18 +66,18 @@ SWE-agent is built and maintained by researchers from Princeton University and S
     </div>
   </a>
 </div>
-## 📣 News
+## News
 
-* July 24: [Mini-SWE-Agent](https://github.com/SWE-agent/mini-SWE-agent) achieves 65% on SWE-bench verified in 100 lines of python!
-* July 9: [Multimodal support for SWE-agent](usage/multimodal.md) - Process images from GitHub issues with vision-capable AI models
-* May 2: [SWE-agent-LM-32b](https://swesmith.com) achieves open-weights SOTA on SWE-bench
-* Feb 28: [SWE-agent 1.0 + Claude 3.7 is SoTA on SWE-Bench full](https://x.com/KLieret/status/1895487966409298067)
-* Feb 25: [SWE-agent 1.0 + Claude 3.7 is SoTA on SWE-bench verified](https://x.com/KLieret/status/1894408819670733158)
-* Feb 13: [Releasing SWE-agent 1.0: SoTA on SWE-bench light & tons of new features](https://x.com/KLieret/status/1890048205448220849)
-* Dec 7: [An interview with the SWE-agent & SWE-bench team](https://www.youtube.com/watch?v=fcr8WzeEXyk)
+* July 24: [Mini-autobot](https://github.com/autobot/mini-autobot) achieves 65% on autobot-bench verified in 100 lines of python!
+* July 9: [Multimodal support for autobot](usage/multimodal.md) - Process images from GitHub issues with vision-capable AI models
+* May 2: [autobot-LM-32b](https://swesmith.com) achieves open-weights SOTA on autobot-bench
+* Feb 28: [autobot 1.0 + Claude 3.7 is SoTA on autobot-bench full](https://x.com/KLieret/status/1895487966409298067)
+* Feb 25: [autobot 1.0 + Claude 3.7 is SoTA on autobot-bench verified](https://x.com/KLieret/status/1894408819670733158)
+* Feb 13: [Releasing autobot 1.0: SoTA on autobot-bench light & tons of new features](https://x.com/KLieret/status/1890048205448220849)
+* Dec 7: [An interview with the autobot & autobot-bench team](https://www.youtube.com/watch?v=fcr8WzeEXyk)
 
-## ✍️ Doc updates
+## Doc updates
 
 * June 26: [Adding custom tools](usage/adding_custom_tools.md)
-* Apr 8: [Running SWE-agent competitively](usage/competitive_runs.md)
-* Mar 7: [Updated SWE-agent architecture diagram of 1.0](background/architecture.md)
+* Apr 8: [Running autobot competitively](usage/competitive_runs.md)
+* Mar 7: [Updated autobot architecture diagram of 1.0](background/architecture.md)

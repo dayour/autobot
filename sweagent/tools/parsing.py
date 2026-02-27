@@ -30,7 +30,7 @@ Or from the command line: `--agent.tools.parse_function.type=thought_action`.
     If you do not use the `FunctionCallingParser`, you need to include documentation about the available tools
     in your system prompt. You can use the `{{command_docs}}` variable to include the automatically generated
     documentation or explicitly describe the available tools.
-    Also see [#1130](https://github.com/SWE-agent/SWE-agent/issues/1130).
+    Also see [#1130](https://github.com/autobot/autobot/issues/1130).
 """
 
 import json
@@ -44,9 +44,9 @@ from typing import Any, Literal
 from jinja2 import Template
 from pydantic import BaseModel
 
-from sweagent.exceptions import FormatError, FunctionCallingFormatError
-from sweagent.tools.commands import Command
-from sweagent.tools.utils import _should_quote
+from autobot.exceptions import FormatError, FunctionCallingFormatError
+from autobot.tools.commands import Command
+from autobot.tools.utils import _should_quote
 
 
 class AbstractParseFunction(ABC):
@@ -260,7 +260,7 @@ class XMLFunctionCallingParser(AbstractParseFunction, BaseModel):
             raise FormatError(msg)
         fn_name = fn_match.group(1).strip()
 
-        # Handle different names in SWE-agent vs. SWE-gym
+        # Handle different names in autobot vs. SWE-gym
         if fn_name == "execute_bash":
             fn_name = "bash"
         if fn_name == "finish":
@@ -423,7 +423,7 @@ class FunctionCallingParser(AbstractParseFunction, BaseModel):
         def get_quoted_arg(value: Any) -> str:
             if isinstance(value, str):
                 return quote(value) if _should_quote(value, command) else value
-            # See https://github.com/SWE-agent/SWE-agent/issues/1159
+            # See https://github.com/autobot/autobot/issues/1159
             if value is None:
                 return ""
             return value

@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from sweagent.agent.history_processors import LastNObservations, TagToolCallObservations
-from sweagent.types import History
+from autobot.agent.history_processors import LastNObservations, TagToolCallObservations
+from autobot.types import History
 
 
 def get_history(traj_path: Path):
@@ -19,7 +19,7 @@ def count_elided_observations(history: History):
 def test_history(test_trajectories_path: Path):
     return get_history(
         test_trajectories_path
-        / "gpt4__swe-agent-test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/6e44b9__sweagenttestrepo-1c2844.traj"
+        / "gpt4__autobot-test-repo__default_from_url__t-0.00__p-0.95__c-3.00__install-1/6e44b9__autobottestrepo-1c2844.traj"
     )
 
 

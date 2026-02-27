@@ -1,11 +1,11 @@
 # Identical to the 250522 config except for a $5 limit/instance
 # For running on lite:
-# sweagent run-batch --config config/benchmarks/250526_anthropic_filemap_simple_review_sbl.yaml --num_workers=20
+# autobot run-batch --config config/benchmarks/250526_anthropic_filemap_simple_review_sbl.yaml --num_workers=20
 # To fully reproduce, please run from the submissions/250526-sonnet-4-sbl branch
 # For running on test:
 random_delay_multiplier: 1.0
 instances:
-  type: swe_bench
+  type: autobot_bench
   subset: lite
   split: test
   shuffle: true

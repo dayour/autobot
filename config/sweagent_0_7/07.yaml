@@ -1,4 +1,4 @@
-# This is the configuration from SWE-agent 0.7
+# This is the configuration from autobot 0.7
 agent:
   templates:
     system_template: |-

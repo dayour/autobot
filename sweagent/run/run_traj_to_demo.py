@@ -9,8 +9,8 @@ import json
 from argparse import ArgumentParser
 from pathlib import Path
 
-from sweagent.utils.log import get_logger
-from sweagent.utils.serialization import _yaml_serialization_with_linebreaks
+from autobot.utils.log import get_logger
+from autobot.utils.serialization import _yaml_serialization_with_linebreaks
 
 logger = get_logger("traj2demo")
 

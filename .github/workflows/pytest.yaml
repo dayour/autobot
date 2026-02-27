@@ -67,7 +67,7 @@ jobs:
         uses: codecov/codecov-action@v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: SWE-agent/SWE-agent
+          slug: autobot/autobot
       - name: Upload test results to Codecov
         if: matrix.python-version == '3.11'
         uses: codecov/test-results-action@v1

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from sweagent import REPO_ROOT
-from sweagent.utils.config import _convert_path_to_abspath, _convert_paths_to_abspath
+from autobot import REPO_ROOT
+from autobot.utils.config import _convert_path_to_abspath, _convert_paths_to_abspath
 
 
 def test_convert_path_to_abspath():

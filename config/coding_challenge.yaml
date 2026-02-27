@@ -1,4 +1,4 @@
-# This is the template you should use when using SWE-agent to solve a coding challenge (i.e. LeetCode).
+# This is the template you should use when using autobot to solve a coding challenge (i.e. LeetCode).
 # It also shows how to repurpose the agent to do tasks different from software engineering.
 agent:
   templates:
@@ -75,7 +75,7 @@ agent:
       {{demonstration}}
       --- END OF DEMONSTRATION ---
     demonstrations:
-      - trajectories/demonstrations/human_thought__swe-bench-HumanEvalFix-python__lcb__t-0.00__p-0.95__c-4.00__install-0/humanevalfix-python-0.traj
+      - trajectories/demonstrations/human_thought__autobot-bench-HumanEvalFix-python__lcb__t-0.00__p-0.95__c-4.00__install-0/humanevalfix-python-0.traj
   tools:
     env_variables:
       WINDOW: 100

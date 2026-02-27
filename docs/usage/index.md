@@ -1,6 +1,6 @@
 # User guides
 
-This part of the documentation covers more details about configuring and developing SWE-agent.
+This part of the documentation covers more details about configuring and developing autobot.
 Just want to run it? See [getting started](../index.md) instead!
 
 <div class="grid cards">
@@ -20,7 +20,7 @@ Just want to run it? See [getting started](../index.md) instead!
         <span class="material-icons nav-card-icon">book</span>
         <span class="nav-card-title">Command line interface</span>
       </div>
-      <p class="nav-card-description">Learn about all the different subcommands of sweagent.</p>
+      <p class="nav-card-description">Learn about all the different subcommands of autobot.</p>
     </div>
   </a>
 
@@ -30,7 +30,7 @@ Just want to run it? See [getting started](../index.md) instead!
         <span class="material-icons nav-card-icon">settings</span>
         <span class="nav-card-title">Configuration</span>
       </div>
-      <p class="nav-card-description">How to configure SWE-agent.</p>
+      <p class="nav-card-description">How to configure autobot.</p>
     </div>
   </a>
 
@@ -40,7 +40,7 @@ Just want to run it? See [getting started](../index.md) instead!
         <span class="material-icons nav-card-icon">image</span>
         <span class="nav-card-title">Multimodal Support</span>
       </div>
-      <p class="nav-card-description">Use SWE-agent with vision-capable AI models for image processing.</p>
+      <p class="nav-card-description">Use autobot with vision-capable AI models for image processing.</p>
     </div>
   </a>
 </div>

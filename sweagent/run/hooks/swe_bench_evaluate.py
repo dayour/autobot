@@ -1,6 +1,6 @@
-"""SweBench evaluation hook.
+"""autobotbench evaluation hook.
 
-Will be automatically added to `run_batch` if `SWEBenchInstances.evaluate` is set to true
+Will be automatically added to `run_batch` if `autobotbenchInstances.evaluate` is set to true
 """
 
 import subprocess
@@ -10,14 +10,14 @@ from pathlib import Path
 from threading import Lock
 from time import time
 
-from sweagent.run.hooks.abstract import RunHook
-from sweagent.run.merge_predictions import merge_predictions
-from sweagent.types import AgentRunResult
-from sweagent.utils.log import get_logger
+from autobot.run.hooks.abstract import RunHook
+from autobot.run.merge_predictions import merge_predictions
+from autobot.types import AgentRunResult
+from autobot.utils.log import get_logger
 
 
-class SweBenchEvaluate(RunHook):
-    _SUBSET_MAP = {"lite": "swe-bench_lite", "verified": "swe-bench_verified", "multimodal": "swe-bench_multimodal"}
+class autobotbenchEvaluate(RunHook):
+    _SUBSET_MAP = {"lite": "autobot-bench_lite", "verified": "autobot-bench_verified", "multimodal": "autobot-bench_multimodal"}
 
     def __init__(self, output_dir: Path, subset: str, split: str, continuous_submission_every: int = 0) -> None:
         super().__init__()
@@ -25,7 +25,7 @@ class SweBenchEvaluate(RunHook):
         self.subset = subset
         self.split = split
         self.continuous_submission_every = continuous_submission_every
-        self.logger = get_logger("SB-evaluate", emoji="😬")
+        self.logger = get_logger("SB-evaluate")
         self.merge_lock = Lock()
         self.last_evaluation_time = time()
         self.evaluation_interval = continuous_submission_every
@@ -59,7 +59,7 @@ class SweBenchEvaluate(RunHook):
         for call in self._running_calls:
             if call.poll() is not None:
                 if call.returncode != 0:
-                    self.logger.error("Failed to submit results to SweBench eval: %s", call.stderr.read())
+                    self.logger.error("Failed to submit results to autobotbench eval: %s", call.stderr.read())
                 self._running_calls.remove(call)
 
     def on_instance_completed(self, *, result: AgentRunResult):
@@ -86,17 +86,17 @@ class SweBenchEvaluate(RunHook):
         """Move report from `sb-cli-reports` to `results.json`."""
         output_dir = self.output_dir / "sb-cli-reports"
         if not output_dir.exists():
-            self.logger.warning("No SweBench report found at %s", output_dir)
+            self.logger.warning("No autobotbench report found at %s", output_dir)
             return
         (self.output_dir / "results.json").unlink(missing_ok=True)
         reports = list(output_dir.glob("*.json"))
         if len(reports) != 1:
-            self.logger.warning("Expected 1 SweBench report at %s, found %d. Cannot rename.", output_dir, len(reports))
+            self.logger.warning("Expected 1 autobotbench report at %s, found %d. Cannot rename.", output_dir, len(reports))
             return
         reports[0].rename(self.output_dir / "results.json")
 
     def on_end(self) -> None:
-        self.logger.info("Submitting results to SWE-Bench")
+        self.logger.info("Submitting results to autobot-bench")
         try:
             subprocess.run(
                 self._get_sb_call(preds_path=self.output_dir / "preds.json"),
@@ -105,7 +105,7 @@ class SweBenchEvaluate(RunHook):
                 stderr=sys.stderr,
             )
         except subprocess.CalledProcessError as e:
-            self.logger.error("Failed to submit results to SweBench eval: %s", e)
+            self.logger.error("Failed to submit results to autobotbench eval: %s", e)
         else:
             # remove temporary predictions if they exist
             if (self.output_dir / "tmppreds.json").exists():

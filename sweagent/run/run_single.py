@@ -1,4 +1,4 @@
-"""[cyan][bold]Run SWE-agent on a single instance taken from github or similar.[/bold][/cyan]
+"""[cyan][bold]Run autobot on a single instance taken from github or similar.[/bold][/cyan]
 
 [cyan][bold]=== BASIC OPTIONS ===[/bold][/cyan]
 
@@ -11,9 +11,9 @@
 
 Basic usage: Run over a [bold][cyan]github issue[/bold][/cyan][green]:
 
-sweagent run --config config/default.yaml --agent.model.name "gpt-4o" \\
-    --env.repo.github_url=https://github.com/SWE-agent/test-repo/ \\
-    --problem_statement.github_url=https://github.com/SWE-agent/test-repo/issues/1
+autobot run --config config/default.yaml --agent.model.name "gpt-4o" \\
+    --env.repo.github_url=https://github.com/autobot/test-repo/ \\
+    --problem_statement.github_url=https://github.com/autobot/test-repo/issues/1
 [/green]
 
 By default this will start a docker container and run the agent in there.
@@ -21,7 +21,7 @@ You can set the image with [green]--env.docker.image[/green].
 
 Here's an example that uses [bold][cyan]modal[/bold][/cyan] instead of docker and also a [bold][cyan]local repository[/bold][/cyan]:
 
-[green]sweagent run --config config/default.yaml --agent.model.name "gpt-4o" \\
+[green]autobot run --config config/default.yaml --agent.model.name "gpt-4o" \\
     --env.deployment.type=modal --env.repo.path /path/to/repo \\
     --problem_statement.path=path/to/problem_statement.md
 [/green]
@@ -36,20 +36,20 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from sweagent.agent.agents import AbstractAgent, AgentConfig, get_agent_from_config
-from sweagent.agent.problem_statement import (
+from autobot.agent.agents import AbstractAgent, AgentConfig, get_agent_from_config
+from autobot.agent.problem_statement import (
     EmptyProblemStatement,
     ProblemStatement,
     ProblemStatementConfig,
 )
-from sweagent.environment.swe_env import EnvironmentConfig, SWEEnv
-from sweagent.run.common import AutoCorrectSuggestion as ACS
-from sweagent.run.common import BasicCLI, ConfigHelper, save_predictions
-from sweagent.run.hooks.abstract import CombinedRunHooks, RunHook
-from sweagent.run.hooks.apply_patch import SaveApplyPatchHook
-from sweagent.run.hooks.open_pr import OpenPRConfig, OpenPRHook
-from sweagent.utils.config import load_environment_variables
-from sweagent.utils.log import add_file_handler, get_logger
+from autobot.environment.autobot_env import EnvironmentConfig, autobotenv
+from autobot.run.common import AutoCorrectSuggestion as ACS
+from autobot.run.common import BasicCLI, ConfigHelper, save_predictions
+from autobot.run.hooks.abstract import CombinedRunHooks, RunHook
+from autobot.run.hooks.apply_patch import SaveApplyPatchHook
+from autobot.run.hooks.open_pr import OpenPRConfig, OpenPRHook
+from autobot.utils.config import load_environment_variables
+from autobot.utils.log import add_file_handler, get_logger
 
 
 class RunSingleActionConfig(BaseModel):
@@ -94,7 +94,7 @@ class RunSingleConfig(BaseSettings, cli_implicit_flags=False):
     """Path to a .env file to load environment variables from."""
 
     # pydantic config
-    model_config = SettingsConfigDict(extra="forbid", env_prefix="SWE_AGENT_")
+    model_config = SettingsConfigDict(extra="forbid", env_prefix="autobot_")
 
     def set_default_output_dir(self) -> None:
         # Needs to be called explicitly, because self._config_files will be setup
@@ -125,7 +125,7 @@ class RunSingleConfig(BaseSettings, cli_implicit_flags=False):
 class RunSingle:
     def __init__(
         self,
-        env: SWEEnv,
+        env: autobotenv,
         agent: AbstractAgent,
         problem_statement: ProblemStatement | ProblemStatementConfig,
         *,
@@ -136,7 +136,7 @@ class RunSingle:
         """Note: When initializing this class, make sure to add the hooks that are required by your actions.
         See `from_config` for an example.
         """
-        self.logger = get_logger("swea-run", emoji="🏃")
+        self.logger = get_logger("swea-run")
         instance_id = problem_statement.id
         _log_filename_template = f"{instance_id}.{{level}}.log"
         for level in ["trace", "debug", "info"]:
@@ -169,7 +169,7 @@ class RunSingle:
         agent = get_agent_from_config(config.agent)
         agent.replay_config = config  # type: ignore[attr-defined]
         self = cls(
-            env=SWEEnv.from_config(config.env),
+            env=autobotenv.from_config(config.env),
             agent=agent,
             problem_statement=config.problem_statement,
             output_dir=config.output_dir,

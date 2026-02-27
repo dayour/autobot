@@ -1,12 +1,12 @@
-from sweagent.environment.repo import Repo, RepoConfig
+from autobot.environment.repo import Repo, RepoConfig
 
 
 class EnvHook:
-    """Hook to be used in `SWEEnv`.
+    """Hook to be used in `autobotenv`.
 
     Subclass this class, add functionality and add it with `SWEEEnv.add_hook(hook)`.
     This allows to inject custom functionality at different stages of the environment
-    lifecycle, in particular to connect SWE-agent to a new interface (like a GUI).
+    lifecycle, in particular to connect autobot to a new interface (like a GUI).
     """
 
     def on_init(self, *, env) -> None:

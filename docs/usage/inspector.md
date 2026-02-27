@@ -1,10 +1,10 @@
 # Inspecting trajectories
 
 !!! abstract "Inspecting trajectories"
-    * Trajectories are the main output of SWE-agent. They are the best way to understand what SWE-agent does, especially when running on many problem instances.
+    * Trajectories are the main output of autobot. They are the best way to understand what autobot does, especially when running on many problem instances.
     * We provide two tools for visualizing the [`.traj` files](trajectories.md) from the `trajectories` folder more easily.
-    * Use `swe-agent inspect` (or `sweagent i`) to open the command line inspector.
-    * Use `swe-agent inspector` (or `sweagent I`) to open the web inspector.
+    * Use `autobot inspect` (or `autobot i`) to open the command line inspector.
+    * Use `autobot inspector` (or `autobot I`) to open the web inspector.
     * Please complete the [hello world](hello_world.md) tutorial before proceeding.
 
 You should see a folder called `trajectories` in your working directory. Let's go to one of the *experiment directories*:
@@ -13,7 +13,7 @@ You should see a folder called `trajectories` in your working directory. Let's g
 cd trajectories/$USER/<some directory>  # (1)!
 ```
 
-1. Don't have a folder here? Make sure to run SWE-agent at least once.
+1. Don't have a folder here? Make sure to run autobot at least once.
 
 ## Command line inspector
 
@@ -22,9 +22,9 @@ cd trajectories/$USER/<some directory>  # (1)!
 Run the inspector in the directory containing your `.traj` files:
 
 ```bash
-sweagent inspect
+autobot inspect
 # or
-sweagent i
+autobot i
 ```
 
 You will be put into a pager that lets you navigate between trajectories.
@@ -46,9 +46,9 @@ Here's how to navigate (this is similar to vim keybindings):
 Run the inspector in this directory (this is where your `*.traj` files are):
 
 ```bash
-sweagent inspector
+autobot inspector
 # or
-sweagent I
+autobot I
 ```
 The inspector will then be launched in the browser:
 
@@ -62,13 +62,13 @@ The inspector will then be launched in the browser:
 
 ## Benchmark results
 
-If you are running SWE-agent on a benchmark (see [batch mode](batch_mode.md)), you will see evaluation results as ✅ or ❌.
-Otherwise, you will see ❓.
+If you are running autobot on a benchmark (see [batch mode](batch_mode.md)), you will see evaluation results as PASS or FAIL.
+Otherwise, you will see a question mark.
 
 !!! tip
-    * If you do not see evaluation results, make sure that the SWE-bench output
+    * If you do not see evaluation results, make sure that the autobot-bench output
       is called `results.json` and is in the same directory as the trajectories.
-    * To see gold patches, point `--data_path` to the SWE-bench dataset.
+    * To see gold patches, point `--data_path` to the autobot-bench dataset.
 
 
 {% include-markdown "../_footer.md" %}

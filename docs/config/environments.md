@@ -1,6 +1,6 @@
 # Environments
 
-SWE-agent runs on docker images (`python:3.11` by default).
+autobot runs on docker images (`python:3.11` by default).
 If you are running on SWE-Benmch, every instance has a docker image that we pull from dockerhub.
 
 Here's an example of a simple custom docker environment:
@@ -28,6 +28,6 @@ SHELL ["/bin/bash", "-c"]
 1. This is the base image that we're starting from
 2. Important to disable any interactive prompts when installing things
 
-Build it with `docker build -f tiny.Dockerfile -t swe-agent-tiny .`.
+Build it with `docker build -f tiny.Dockerfile -t autobot-tiny .`.
 
-Now you can run it in the agent with `sweagent run --env.deployment.image swe-agent-tiny ...`
+Now you can run it in the agent with `autobot run --env.deployment.image autobot-tiny ...`

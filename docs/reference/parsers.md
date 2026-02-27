@@ -1,3 +1,3 @@
 # Action parsers
 
-::: sweagent.tools.parsing
+::: autobot.tools.parsing

@@ -7,7 +7,7 @@ We currently support the following input types:
 * A URL to a GitHub issue (`GithubIssue`)
 * An empty problem statement (`EmptyProblemStatement`)
 
-With `sweagent run`, you can specify the problem statement type with the `--problem-statement` flag.
+With `autobot run`, you can specify the problem statement type with the `--problem-statement` flag.
 For example:
 
 ```bash title="From text"
@@ -28,30 +28,30 @@ For example:
 See below for more details on the configuration options.
 
 
-All of these classes are defined in `sweagent.agent.problem_statement`.
+All of these classes are defined in `autobot.agent.problem_statement`.
 
-::: sweagent.agent.problem_statement.problem_statement_from_simplified_input
+::: autobot.agent.problem_statement.problem_statement_from_simplified_input
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.agent.problem_statement.TextProblemStatement
+::: autobot.agent.problem_statement.TextProblemStatement
     options:
         show_root_full_path: false
         show_bases: false
 
 
-::: sweagent.agent.problem_statement.FileProblemStatement
+::: autobot.agent.problem_statement.FileProblemStatement
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.agent.problem_statement.GithubIssue
+::: autobot.agent.problem_statement.GithubIssue
     options:
         show_root_full_path: false
         show_bases: false
 
-::: sweagent.agent.problem_statement.EmptyProblemStatement
+::: autobot.agent.problem_statement.EmptyProblemStatement
     options:
         show_root_full_path: false
         show_bases: false
