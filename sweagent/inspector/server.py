@@ -239,8 +239,14 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def serve_file_content(self, file_path):
         try:
+            # Prevent path traversal by resolving and checking the path stays within traj_dir
+            base = Path(self.traj_dir).resolve()
+            target = (base / file_path).resolve()
+            if not str(target).startswith(str(base)):
+                self.send_error(403, "Access denied: path traversal detected")
+                return
             content = load_content(
-                Path(self.traj_dir) / file_path,
+                target,
                 self.gold_patches,
                 self.test_patches,
             )
@@ -258,6 +264,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.handle_files_request()
         elif self.path.startswith("/trajectory/"):
             file_path = self.path[len("/trajectory/") :]
+            # Strip leading slashes and reject path traversal components
+            file_path = file_path.lstrip("/")
+            if ".." in file_path.split("/") or file_path.startswith("/"):
+                self.send_error(403, "Access denied: path traversal detected")
+                return
             self.serve_file_content(file_path)
         elif self.path.startswith("/check_update"):
             self.check_for_updates()
@@ -304,8 +315,11 @@ def main(data_path, directory, port):
         with open(Path(directory) / "args.yaml") as file:
             args = yaml.safe_load(file)
         if "environment" in args and "data_path" in args["environment"]:
-            data_path = Path(__file__).parent.parent / args["environment"]["data_path"]
-            if data_path.exists:
+            data_path = (Path(__file__).parent.parent / args["environment"]["data_path"]).resolve()
+            base_dir = Path(__file__).parent.parent.resolve()
+            if not str(data_path).startswith(str(base_dir)):
+                print(f"WARNING: data_path {data_path} is outside project directory, skipping")
+            elif data_path.exists():
                 with open(data_path) as f:
                     data = json.load(f)
 
